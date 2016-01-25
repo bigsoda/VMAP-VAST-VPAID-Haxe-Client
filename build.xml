@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="bs-vmap-vast" default="Test">
+
+	<target name="Test">
+        <delete dir="bin/web"/>
+        <mkdir dir="bin/web"/>
+
+        <copy todir="bin/web">
+            <fileset dir="assets/web" includes="**"/>
+        </copy>
+
+        <exec executable="haxe" failonerror="true">
+            <arg line="build.hxml"/>
+        </exec>
+
+    </target>
+
+	<target name="Doc">
+        <delete dir="bin/web"/>
+        <mkdir dir="bin/web"/>
+		
+        <exec executable="haxe" failonerror="true">
+            <arg line="-xml bin/doc.xml"/>
+            <arg line="build.hxml"/>
+        </exec>
+		
+        <exec executable="haxelib" failonerror="true">
+            <arg line="run"/>
+            <arg line="dox"/>
+            <arg line="-i bin"/>
+        </exec>
+
+    </target>
+</project>
