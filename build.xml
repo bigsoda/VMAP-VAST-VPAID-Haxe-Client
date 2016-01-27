@@ -2,9 +2,7 @@
 <project name="bs-vmap-vast" default="Test">
 
     <target name="Test">
-        <delete includeEmptyDirs="true">
-            <fileset dir="bin" includes="**/*" defaultexcludes="no"/>
-        </delete>
+        <delete dir="bin/web"/>
         <mkdir dir="bin/web"/>
         <copy todir="bin/web">
             <fileset dir="assets/web" includes="**"/>

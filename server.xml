@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="bs-vmap-vast" default="runServer">
+<project name="bs-vmap-vast-server" default="runServer">
 
 <target name="runServer">
     <exec executable="python" dir="assets/web/examples">
