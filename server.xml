@@ -2,11 +2,14 @@
 <project name="bs-vmap-vast" default="runServer">
 
 <target name="runServer">
-	<exec executable="python" dir="assets/web/examples">
-		<arg line="-m" />
-		<arg line="SimpleHTTPServer" />
-		<arg line="9999" />
-	</exec>
+    <exec executable="python" dir="assets/web/examples">
+        <arg line="../../../server.py 9999"/>
+    </exec>
+	<!--<exec executable="python" dir="assets/web/examples">-->
+		<!--<arg line="-m" />-->
+		<!--<arg line="SimpleHTTPServer" />-->
+		<!--<arg line="9999" />-->
+	<!--</exec>-->
 </target>
 
 <target name="stopServer">

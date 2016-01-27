@@ -1,87 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="bs-vmap-vast" default="Test">
 
-	<target name="Test">
-        <delete dir="bin/web"/>
+    <target name="Test">
+        <delete includeEmptyDirs="true">
+            <fileset dir="bin" includes="**/*" defaultexcludes="no"/>
+        </delete>
         <mkdir dir="bin/web"/>
-
         <copy todir="bin/web">
             <fileset dir="assets/web" includes="**"/>
         </copy>
-
         <exec executable="haxe" failonerror="true">
             <arg line="build.hxml"/>
         </exec>
-
     </target>
 
-    <target name="runServer">
-        <parallel>
-            <daemons>
-                <exec executable="python" dir="assets/web/examples">
-                    <arg line="-m" />
-                    <arg line="SimpleHTTPServer" />
-                    <arg line="9999" />
-                </exec>
-            </daemons>
-        </parallel>
-        <sleep hours="10"/>
-    </target>
-
-    <property name="examples-server-port" value="8989"/>
-
-    <target name="examples-server-stop" >
-        <!-- ps aux | grep python | grep SimpleHTTPServer | grep ${examples-server-port} | perl -pe 's/[ \t]+/\t/g' | cut -f 2 | xargs kill -9 -->
-        <exec executable="ps" outputproperty="ps.aux.value">
-            <arg line="aux" />
-        </exec>
-        <exec executable="grep" inputstring="${ps.aux.value}" outputproperty="grep.SimpleHTTPServer.value">
-            <arg line="SimpleHTTPServer" />
-        </exec>
-        <exec executable="grep" inputstring="${grep.SimpleHTTPServer.value}" outputproperty="grep.port.value">
-            <arg line="${examples-server-port}" />
-        </exec>
-        <exec executable="perl" inputstring="${grep.port.value}" outputproperty="pearl.value">
-            <arg line="-pe" />
-            <arg line="'s/[ \t]+/\t/g'" />
-        </exec>
-        <exec executable="cut" inputstring="${pearl.value}" outputproperty="cut.value">
-            <arg line="-f" />
-            <arg line="2" />
-        </exec>
-        <exec executable="xargs" inputstring="${cut.value}" outputproperty="xargs.value">
-            <arg line="kill" />
-            <arg line="-9" />
-        </exec>
-    </target>
-
-    <target name="examples-server-start" depends="examples-server-stop" >
-        <!-- python -m SimpleHTTPServer ${examples-server-port}-->
-        <record name="build-examples-server.log" loglevel="verbose" action="start"/>
-        <parallel failonany="true">
-            <!--<daemons>-->
-                <exec id="examples-server" executable="python" dir="assets/web/examples">
-                    <arg line="-m"/>
-                    <arg line="SimpleHTTPServer"/>
-                    <arg line="${examples-server-port}"/>
-                    <!--<arg line=">/dev/null"/>-->
-                    <!--<arg line="2>&amp;1"/>-->
-                    <!--<arg line="&amp;"/>-->
-                </exec>
-            <!--</daemons>-->
-        </parallel>
-
-    </target>
-
-	<target name="Doc">
+    <target name="Doc">
         <delete dir="bin/web"/>
         <mkdir dir="bin/web"/>
-		
         <exec executable="haxe" failonerror="true">
             <arg line="-xml bin/doc.xml"/>
             <arg line="build.hxml"/>
         </exec>
-		
         <exec executable="haxelib" failonerror="true">
             <arg line="run"/>
             <arg line="dox"/>
@@ -89,4 +28,16 @@
         </exec>
 
     </target>
+
+    <target name="munit">
+        <delete includeEmptyDirs="true">
+            <fileset dir="bin" includes="**/*" defaultexcludes="no"/>
+        </delete>
+        <exec executable="haxelib" failonerror="true">
+            <arg line="run"/>
+            <arg line="munit"/>
+            <arg line="test"/>
+        </exec>
+    </target>
+
 </project>

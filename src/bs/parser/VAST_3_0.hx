@@ -43,7 +43,6 @@ class VAST_3_0 implements IParser
 		vast = new Fast(vastXML);
 		result.version = Vast.getVersion(vast.node.VAST.att.version);
 		result.ads = getAds(vast.node.VAST.nodes.Ad);
-		trace(result);
 		return result;
 	}
 	

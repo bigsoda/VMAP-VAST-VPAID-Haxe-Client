@@ -3,7 +3,7 @@
    <Ad id="e529f14a-6d86-4905-896f-1410901d5dad">
       <Wrapper>
          <AdSystem>Videoplaza Karbon</AdSystem>
-        <VASTAdTagURI><![CDATA[http://localhost/bigsoda/vmap/examples/vast/1c.xml]]></VASTAdTagURI>
+         <VASTAdTagURI><![CDATA[http://localhost:9999/vast/1c.xml]]></VASTAdTagURI>
          <Error><![CDATA[http://konnect-test.videoplaza.tv/proxy/tracker/v2?aid=0&cf=short_form&dcid=911d9b52-dbf6-407d-915c-1499a49b8b09&e=0&pid=f3997825-9112-41ea-a91b-2db354dcff0d&s=mobile&t=VP10-mobile&tid=4082e5c7-0e79-11e5-bd51-002590e81073&tt=p&ua=%5Bua%5D&uc=%5Buc%5D]]></Error>
          <Impression><![CDATA[http://pskolysz.techxstream.com/test/ebtv/vmap/impression.php?server=3]]></Impression>
          <Creatives>

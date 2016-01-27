@@ -1,0 +1,6 @@
+# JavaScript
+-main TestMain
+-cp src
+-cp test
+-lib munit
+-js bin/js_test.js
