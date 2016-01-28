@@ -45,13 +45,13 @@ class VastParser
 	 * @param	parser class of VAST Version - 1.0, 2.0, 3.0, must implement parser interface.
 	 */
 	public static function parse(vast:Xml, parserType:Class<IParser>,  success:Vast->Void, error:Dynamic->Void):Void
-	{	
+	{
 		var parser:IParser = cast Type.createInstance(parserType, []);
 		Wrapper.check(vast, function (data:Xml) { success(parser.parse(data)); }, error, onWrapperWarn);
 	}
 	
 	static function onWrapperWarn(data:Dynamic):Void 
 	{
-		
+		#if js js.Browser.console.log('VastParser.onWrapperWarn', data); #end
 	}
 }

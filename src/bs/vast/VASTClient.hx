@@ -27,10 +27,19 @@ class VASTClient
 	
 	public static function parseVast(xml:Xml, success:Vast->Void, error:Dynamic->Void):Void
 	{ 
-		var version = Vast.getVersion(new Fast(xml).node.VAST.att.version);
+		var version:VastVersion = null;
+
+		var vastNode = new Fast(xml);
+		if (vastNode.hasNode.VAST)
+			version = Vast.getVersion(vastNode.node.VAST.att.version);
+		else
+		if (vastNode.hasNode.VideoAdServingTemplate)
+			version = VastVersion.v_1_0;
+
 		var parser:Class<IParser>;
 		switch(version) {
-			case VastVersion.v_2_0 | VastVersion.v_2_0 | VastVersion.v_3_0 : parser = VAST_3_0; 
+			case VastVersion.v_1_0 : parser = VAST_1_0;
+			case VastVersion.v_2_0 | VastVersion.v_3_0 : parser = VAST_3_0;
 			default : parser = VAST_3_0;
 		}
 		VastParser.parse(xml, parser, success, error);
@@ -40,16 +49,12 @@ class VASTClient
 	{
 		var req:XMLHttpRequest = new XMLHttpRequest();
 		req.onerror = error;
-		
-		req.onloadend = function():Void 
-		{
-			if (req.status == 200) 
-			{			
+		req.onloadend = function():Void {
+			if (req.status == 200) {
 				var xml = Xml.parse(req.response); 
 				success(xml);
 			} else {
-				for (err in HttpError.LIST) 
-				{
+				for (err in HttpError.LIST) {
 					if (err.code == req.status)
 						error(err);
 					else 

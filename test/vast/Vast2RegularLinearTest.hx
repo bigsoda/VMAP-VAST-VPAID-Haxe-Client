@@ -7,7 +7,7 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
 
-class Vast2Test
+class Vast2RegularLinearTest
 {
 	var asyncHandler:Dynamic;
 	var vastAss:Asserts;
@@ -22,14 +22,16 @@ class Vast2Test
 	@AsyncTest
 	public function getVAST(factory:AsyncFactory):Void {
 		asyncHandler = factory.createHandler(this, vastAss.start, 6000);
-		VASTClient.getVast('http://localhost:9999/vast2/ad3.liverail.com.non.linear.xml', parseVAST, vastAss.error);
+		VASTClient.getVast('http://localhost:9999/vast2/vast2RegularLinear.xml', parseVAST, vastAss.error);
 	}
 
 	function parseVAST(data:Xml):Void {
+		//#if js js.Browser.console.log(Type.getClassName(Type.getClass(this)), data.toString()); #end
 		VASTClient.parseVast(data, onVastParseSuccess, vastAss.error);
 	}
 
 	function onVastParseSuccess(data:Vast):Void {
+		#if js js.Browser.console.log(Type.getClassName(Type.getClass(this)), data); #end
 		vastAss.data = data;
 		asyncHandler();
 	}

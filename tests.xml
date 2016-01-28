@@ -23,7 +23,7 @@
             <arg line="-coverage"/>
 
             <!-- execute specific test -->
-            <!--<arg line="-filter vast.Parser3Test"/>-->
+            <!--<arg line="-filter vast.Vast2ErrorsEmptyTest"/>-->
 
 
             <!--<arg line="-debug"/>-->

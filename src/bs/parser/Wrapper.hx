@@ -114,21 +114,30 @@ class Wrapper
 	static private function mergeVast(wrapper:Xml):Void
 	{
 		var orginalWrapper = Xml.parse("");
-		var fastWrapper = new Fast(wrapper);
+//		var fastWrapper = new Fast(wrapper);
+		var fastWrapper = new Fast(wrapper.firstElement());
 		//Trace.log("mergeVast");
 		//Trace.xmlFromString(wrapper.toString());
 		
-		if (!fastWrapper.hasNode.VAST ||
-			!fastWrapper.node.VAST.hasNode.Ad ||
-			(!fastWrapper.node.VAST.node.Ad.hasNode.Wrapper && 
-			!fastWrapper.node.VAST.node.Ad.hasNode.InLine)) {
+//		if (!fastWrapper.hasNode.VAST ||
+//			!fastWrapper.node.VAST.hasNode.Ad ||
+//			(!fastWrapper.node.VAST.node.Ad.hasNode.Wrapper &&
+//			!fastWrapper.node.VAST.node.Ad.hasNode.InLine)) {
+//			removeWrapperTag(orginalVast);
+//			checkForWrappers(orginalVast);
+//			warn(VastError.CODE_303);
+//			//Trace.log("mergeVast - IF");
+//			return;
+//		}
+
+		if (!fastWrapper.hasNode.Ad || (!fastWrapper.node.Ad.hasNode.Wrapper && !fastWrapper.node.Ad.hasNode.InLine)) {
 			removeWrapperTag(orginalVast);
 			checkForWrappers(orginalVast);
 			warn(VastError.CODE_303);
 			//Trace.log("mergeVast - IF");
 			return;
 		}
-		
+
 		for (ad in orginalVast.firstElement().elementsNamed("Ad")) {
 			if (ad.firstElement().nodeName == "Wrapper") {
 				orginalWrapper = ad.firstElement();

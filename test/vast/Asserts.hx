@@ -29,23 +29,48 @@ class Asserts
 		if (data.ads.length < 1 )
 			Assert.fail('VAST ads.length < 1');
 
-		checkAds(data.ads);
+		if (data.version == VastVersion.v_1_0) {
+			checkAdsV1(data.ads);
+		}
+		else {
+			checkAdsV2(data.ads);
+		}
 	}
 
-	function checkAds(ads:Array<Ad>):Void {
+	function checkAdsV1(ads:Array<Ad>):Void {
+		for(ad in ads) {
+			Assert.isNotNull(ad.system);
+			Assert.isNotNull(ad.title);
+//			Assert.isNotNull(ad.impressions);
+
+//			if (ad.impressions.length < 1 )
+//				Assert.fail('VAST Ad impressions.length < 1');
+
+//			checkAdImpresions(ad.impressions);
+
+//			Assert.isNotNull(ad.creatives);
+//			if (ad.creatives.length < 1 )
+//				Assert.fail('VAST Ad creatives.length < 1');
+
+//			checkAdCreatives(ad.creatives);
+		}
+	}
+
+
+	function checkAdsV2(ads:Array<Ad>):Void {
 		for(ad in ads) {
 			Assert.isNotNull(ad.system);
 			Assert.isNotNull(ad.title);
 			Assert.isNotNull(ad.impressions);
 
-			if (ad.impressions.length < 1 )
-				Assert.fail('VAST Ad impressions.length < 1');
+//			if (ad.impressions.length < 1 )
+//				Assert.fail('VAST Ad impressions.length < 1');
 
 			checkAdImpresions(ad.impressions);
 
 			Assert.isNotNull(ad.creatives);
-			if (ad.creatives.length < 1 )
-				Assert.fail('VAST Ad creatives.length < 1');
+//			if (ad.creatives.length < 1 )
+//				Assert.fail('VAST Ad creatives.length < 1');
 
 			checkAdCreatives(ad.creatives);
 		}

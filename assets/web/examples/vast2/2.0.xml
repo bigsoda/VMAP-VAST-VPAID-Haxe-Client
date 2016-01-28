@@ -81,7 +81,7 @@
    <Ad id="11126040.140208305013120" sequence="1">
       <Wrapper>
          <AdSystem>FreeWheel</AdSystem>
-         <VASTAdTagURI><![CDATA[http://localhost:9999/vast/1a.xml]]></VASTAdTagURI>
+         <VASTAdTagURI><![CDATA[http://localhost:9999/vast2/1a.xml]]></VASTAdTagURI>
          <Error><![CDATA[http://intearsheet.v.fwmrm.net/ad/l/1?s=debugn&n=381953%3B381953&t=1433834853859102012&f=2&r=381953&adid=11126040&reid=4053052&arid=0&iw=&uxnw=&uxss=&uxct=&et=e&cn=%5BERRORCODE%5D]]></Error>
          <Impression><![CDATA[http://pskolysz.techxstream.com/test/ebtv/vmap/impression.php?server=1]]></Impression>
          <Creatives>
@@ -113,7 +113,7 @@
 	<Ad id="11126040.1402083050131110" sequence="2">
       <Wrapper>
          <AdSystem>FreeWheel</AdSystem>
-         <VASTAdTagURI><![CDATA[http://localhost:9999/vast/1a-empty.xml]]></VASTAdTagURI>
+         <VASTAdTagURI><![CDATA[http://localhost:9999/vast2/1a-empty.xml]]></VASTAdTagURI>
          <Error><![CDATA[http://intearsheet.v.fwmrm.net/ad/l/1?s=debugn&n=381953%3B381953&t=1433834853859102012&f=2&r=381953&adid=11126040&reid=4053052&arid=0&iw=&uxnw=&uxss=&uxct=&et=e&cn=%5BERRORCODE%5D]]></Error>
          <Impression><![CDATA[http://pskolysz.techxstream.com/test/ebtv/vmap/impression.php?server=1]]></Impression>
          <Creatives>
