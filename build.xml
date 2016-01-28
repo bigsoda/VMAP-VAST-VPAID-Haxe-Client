@@ -24,18 +24,6 @@
             <arg line="dox"/>
             <arg line="-i bin"/>
         </exec>
-
-    </target>
-
-    <target name="munit">
-        <delete includeEmptyDirs="true">
-            <fileset dir="bin" includes="**/*" defaultexcludes="no"/>
-        </delete>
-        <exec executable="haxelib" failonerror="true">
-            <arg line="run"/>
-            <arg line="munit"/>
-            <arg line="test"/>
-        </exec>
     </target>
 
 </project>

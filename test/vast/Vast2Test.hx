@@ -7,7 +7,7 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
 
-class Parser1Test 
+class Vast2Test
 {
 	var asyncHandler:Dynamic;
 	var vastAss:Asserts;
@@ -22,7 +22,7 @@ class Parser1Test
 	@AsyncTest
 	public function getVAST(factory:AsyncFactory):Void {
 		asyncHandler = factory.createHandler(this, vastAss.start, 6000);
-		VASTClient.getVast('http://localhost:9999/vast/1a.xml', parseVAST, vastAss.error);
+		VASTClient.getVast('http://localhost:9999/vast2/ad3.liverail.com.non.linear.xml', parseVAST, vastAss.error);
 	}
 
 	function parseVAST(data:Xml):Void {

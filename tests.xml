@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="bs-vmap-vast-munit" default="munit">
+
+    <target name="munit">
+        <delete includeEmptyDirs="true">
+            <fileset dir="bin" includes="**/*" defaultexcludes="no"/>
+        </delete>
+        <exec executable="haxelib" failonerror="true">
+            <arg line="run"/>
+            <arg line="munit"/>
+            <arg line="test"/>
+
+            <!-- run test in browser ex:firefox-->
+            <arg line="-browser FireFox"/>
+
+            <!-- kill browser after test execute -->
+            <!--<arg line="-kill-browser"/>-->
+
+            <!-- set timeout for tests def:30sec -->
+            <!--<arg line="-timeout 60"/>-->
+
+            <!-- run with massive coverage (MCover) -->
+            <arg line="-coverage"/>
+
+            <!-- execute specific test -->
+            <!--<arg line="-filter vast.Parser3Test"/>-->
+
+
+            <!--<arg line="-debug"/>-->
+        </exec>
+    </target>
+
+</project>

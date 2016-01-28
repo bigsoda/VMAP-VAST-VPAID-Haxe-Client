@@ -1,8 +1,8 @@
 import massive.munit.TestSuite;
 
-import vast.Parser1Test;
-import vast.Parser2Test;
-import vast.Parser3Test;
+import vast.Vast1Test;
+import vast.Vast2Test;
+import vast.Vast3Test;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -16,8 +16,8 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
-		add(vast.Parser1Test);
-		add(vast.Parser2Test);
-		add(vast.Parser3Test);
+		add(vast.Vast1Test);
+		add(vast.Vast2Test);
+		add(vast.Vast3Test);
 	}
 }
