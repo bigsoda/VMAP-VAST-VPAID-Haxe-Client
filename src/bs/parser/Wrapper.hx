@@ -200,27 +200,41 @@ class Wrapper
 	
 	static private function addCreatives(ad:Xml, wrapper:Xml) 
 	{
+		var adFast = new Fast(ad.firstElement());
+		var wrapperFast = new Fast(wrapper);
+
+		if (wrapperFast.hasNode.Creatives)
+			if (adFast.hasNode.Creatives)
+				for (creative in wrapperFast.node.Creatives.elements)
+					adFast.node.Creatives.x.addChild(creative.x);
+			else
+				adFast.x.addChild(wrapperFast.node.Creatives.x);
+
+		/*
 		var adHasCreatives = ad.firstElement().elementsNamed("Creatives").hasNext();
 		var wrapperHasCreatives = wrapper.elementsNamed("Creatives").hasNext();
 		//Trace.logColor("adHasCreatives: " + adHasCreatives +", wrapperHasCreatives: " + wrapperHasCreatives);
-		
-		
+
 		if (!adHasCreatives && wrapperHasCreatives) {
 			ad.firstElement().addChild(wrapper.elementsNamed("Creatives").next());
 		}
-		
-		
-		
+
 		if (adHasCreatives && wrapperHasCreatives) {
 			for (creative in wrapper.elementsNamed("Creatives").next().elementsNamed("Creative")) {
 				//Linear Tracking
 				//Trace.xmlFromString(ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().toString());
 				//ad.firstElement().elementsNamed("Creatives").next().addChild(creative);
-				
-				
+
+
+
 				for (tracking in creative.elementsNamed("Linear").next().elementsNamed("TrackingEvents").next().elementsNamed("Tracking")) {
 					//TODO Ad doesn't have Tracking event
-					var f:Fast = new Fast(ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().elementsNamed("Linear").next());
+					//trace(tracking.toString());
+
+//					if (!creative.elementsNamed("Linear").hasNext() || !creative.elementsNamed("Linear").next().elementsNamed("TrackingEvents").hasNext())
+//						break;
+
+					//var f:Fast = new Fast(ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().elementsNamed("Linear").next());
 					//Trace.logColor("fast: " + f.hasNode.TrackingEvents);
 					//Trace.logColor(ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().elementsNamed("Linear").next().elementsNamed("TrackingEvents").hasNext());
 					
@@ -229,10 +243,9 @@ class Wrapper
 					} else {
 						//Trace.logColor("ADD TRACKING EVENTS");
 						ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().elementsNamed("Linear").next().addChild(Xml.parse("<TrackingEvents></TrackingEvents>"));
-						
 						//ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().elementsNamed("Linear").next().elementsNamed("TrackingEvents").next().addChild(tracking);
 					}
-					
+
 				}
 				//Trace.xmlFromString(ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().toString());
 				
@@ -243,6 +256,7 @@ class Wrapper
 				
 			}
 		}
+		*/
 	}
 	
 	/*static function newXMLHttpRequest(): XMLHttpRequest
@@ -252,4 +266,11 @@ class Wrapper
 		}
 		return new XMLHttpRequest();
 	}*/
+	static function log(data:Dynamic):Void
+	{
+		#if js
+		js.Browser.console.info(data);
+		#end
+		trace(data);
+	}
 }

@@ -47,11 +47,12 @@ class VastParser
 	public static function parse(vast:Xml, parserType:Class<IParser>,  success:Vast->Void, error:Dynamic->Void):Void
 	{
 		var parser:IParser = cast Type.createInstance(parserType, []);
-		Wrapper.check(vast, function (data:Xml) { success(parser.parse(data)); }, error, onWrapperWarn);
+		Wrapper.check(vast, function (data:Xml) { success(parser.parse(data, error)); }, error, onWrapperWarn);
 	}
 	
 	static function onWrapperWarn(data:Dynamic):Void 
 	{
+		//TODO warn only in console.log
 		#if js js.Browser.console.log('VastParser.onWrapperWarn', data); #end
 	}
 }

@@ -1,6 +1,5 @@
 package vast;
 
-import bs.tools.Trace;
 import vast.Asserts;
 import bs.model.vast.Vast;
 import bs.vast.VASTClient;
@@ -8,7 +7,16 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
 
-class Vast1NonLinearTest
+class Vast1RegularLinearTest_OFF extends Tests
+{
+	public function new() { super(); }
+
+	@AsyncTest
+	public function test(factory:AsyncFactory):Void {
+		super.vast(factory,'examples/vast2/vast_inline_linear.xml');
+	}
+
+}
 {
 	var asyncHandler:Dynamic;
 	var vastAss:Asserts;
@@ -23,7 +31,7 @@ class Vast1NonLinearTest
 	@AsyncTest
 	public function getVAST(factory:AsyncFactory):Void {
 		asyncHandler = factory.createHandler(this, vastAss.start, 6000);
-		VASTClient.getVast('http://localhost:9999/vast/vast1Nonlinear.xml', parseVAST, vastAss.error);
+		VASTClient.getVast('http://localhost:9999/vast/vast1RegularLinear.xml', parseVAST, vastAss.error);
 	}
 
 	function parseVAST(data:Xml):Void {

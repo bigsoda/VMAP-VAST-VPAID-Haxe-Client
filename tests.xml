@@ -11,7 +11,7 @@
             <arg line="test"/>
 
             <!-- run test in browser ex:firefox-->
-            <arg line="-browser FireFox"/>
+            <!--<arg line="-browser FireFox"/>-->
 
             <!-- kill browser after test execute -->
             <!--<arg line="-kill-browser"/>-->
@@ -23,7 +23,9 @@
             <arg line="-coverage"/>
 
             <!-- execute specific test -->
-            <!--<arg line="-filter vast.Vast2ErrorsEmptyTest"/>-->
+            <!--<arg line="-filter vast.Vast3Test"/>-->
+            <!--<arg line="-filter vast.Vast2WrapperTest"/>-->
+            <!--<arg line="-filter vast.Vast2WrapperLinear1Test"/>-->
 
 
             <!--<arg line="-debug"/>-->

@@ -17,7 +17,7 @@ class VAST_2_0 implements IParser
 		
 	}
 	
-	public function parse(xml:Xml):Vast  
+	public function parse(xml:Xml, onError:Dynamic->Void):Vast
 	{
 		trace("PARSE FROM VAST_2_0 Parser");
 		return new Vast();

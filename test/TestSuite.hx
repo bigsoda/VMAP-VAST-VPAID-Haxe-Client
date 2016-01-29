@@ -1,8 +1,5 @@
 import massive.munit.TestSuite;
 
-import vast.Vast1NonLinearTest;
-import vast.Vast1RegularLinearTest;
-import vast.Vast1VPAIDLinearTest;
 import vast.Vast2InlineLinearTest;
 import vast.Vast2InlineNonLinearTest;
 import vast.Vast2NonLinearTest;
@@ -28,9 +25,6 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
-		add(vast.Vast1NonLinearTest);
-		add(vast.Vast1RegularLinearTest);
-		add(vast.Vast1VPAIDLinearTest);
 		add(vast.Vast2InlineLinearTest);
 		add(vast.Vast2InlineNonLinearTest);
 		add(vast.Vast2NonLinearTest);

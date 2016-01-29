@@ -3,7 +3,7 @@
   <Ad id="602833">
   <Wrapper>
     <AdSystem>Acudeo Compatible</AdSystem>
-    <VASTAdTagURI>http://localhost:9999/vast2/vast_inline_linear.xml</VASTAdTagURI>
+    <VASTAdTagURI>web/examples/vast2/vast_inline_linear.xml</VASTAdTagURI>
     <Error>http://myErrorURL/wrapper/error</Error>
     <Impression>http://myTrackingURL/wrapper/impression</Impression>
 	<Creatives>

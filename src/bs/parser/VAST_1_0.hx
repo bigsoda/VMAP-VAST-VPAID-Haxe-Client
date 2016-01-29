@@ -11,22 +11,24 @@ import haxe.Constraints.Function;
  * ...
  * @author Piotr Skolysz <piotr.skolysz@bigsoda.pl>
  */
-class VAST_1_0 extends VAST_3_0 implements IParser
+class VAST_1_0 implements IParser
 {
 
 	public function new() 
 	{
-		super();
 	}
 	
-//	public function parse(xml:Xml):Vast
-//	{
-//		trace("PARSE FROM VAST_2_0 Parser");
-//		return new Vast();
-//	}
-
-	override public function parse(vastXml:Xml):Vast
+	public function parse(xml:Xml, onError:Dynamic->Void):Vast
 	{
+		trace("PARSE FROM VAST_2_0 Parser");
+		return new Vast();
+	}
+
+/*
+	override public function parse(vastXml:Xml, onWarn:Dynamic->Void, onError:Dynamic->Void):Vast
+	{
+		error = onError;
+		error = onError;
 		var result:Vast = new Vast();
 		result.version = VastVersion.v_1_0;
 		vast = new Fast(vastXml.firstElement());
@@ -73,4 +75,5 @@ class VAST_1_0 extends VAST_3_0 implements IParser
 
 		return result;
 	}
+*/
 }

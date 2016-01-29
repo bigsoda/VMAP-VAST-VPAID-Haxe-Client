@@ -4,3 +4,4 @@ bin=bin
 report=report
 hxml=munit.hxml
 classPaths=src
+resources=assets

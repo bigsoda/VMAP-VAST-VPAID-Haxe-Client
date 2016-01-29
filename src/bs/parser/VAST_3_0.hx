@@ -1,4 +1,5 @@
 package bs.parser;
+import bs.model.VastError;
 import bs.interfaces.ICreativeDetails;
 import bs.interfaces.IParser;
 import bs.model.vast.ad.Ad;
@@ -32,13 +33,16 @@ import haxe.xml.Fast;
 class VAST_3_0 implements IParser
 {
 	var vast:Fast;
+	var error:Dynamic->Void;
+
 	public function new() 
 	{
 		
 	}
 	
-	public function parse(vastXML:Xml):Vast
+	public function parse(vastXML:Xml, onError:Dynamic->Void):Vast
 	{
+		error = onError;
 		var result:Vast = new Vast();
 		vast = new Fast(vastXML);
 		result.version = Vast.getVersion(vast.node.VAST.att.version);
@@ -52,29 +56,40 @@ class VAST_3_0 implements IParser
 		
 		for (adFast in ads) 
 		{
-			var ad:Ad = new Ad();
+//			var ad:Ad = new Ad();
+
 			//Requierd
-			ad.id = adFast.att.id;
-			ad.impressions = getImpressions(adFast.node.InLine.nodes.Impression);
-			ad.system = getAdSystem(adFast.node.InLine.node.AdSystem);
-			ad.title = adFast.node.InLine.node.AdTitle.innerData;
-			ad.creatives = getCreatives(adFast.node.InLine.node.Creatives.nodes.Creative);
-		
+//			ad.id = adFast.att.id;
+//			ad.impressions = getImpressions(adFast.node.InLine.nodes.Impression);
+//			ad.system = getAdSystem(adFast.node.InLine.node.AdSystem);
+//			ad.title = adFast.node.InLine.node.AdTitle.innerData;
+//			ad.creatives = getCreatives(adFast.node.InLine.node.Creatives.nodes.Creative);
+
+			var inLine = adFast.node.InLine;
+			var ad:Ad = new Ad();
+			ad.id = adFast.has.id ? adFast.att.id : '';
+			ad.impressions = getImpressions(inLine.nodes.Impression);
+			ad.system = inLine.hasNode.AdSystem ? getAdSystem(inLine.node.AdSystem) : null;
+			ad.title = inLine.hasNode.AdTitle && inLine.node.AdTitle.hasNode.innerData ?
+				inLine.node.AdTitle.innerData : '';
+			ad.creatives = inLine.hasNode.Creatives && inLine.node.Creatives.hasNode.Creative ?
+				getCreatives(inLine.node.Creatives.nodes.Creative) : null;
+
 			//Optional
-			if (adFast.node.InLine.hasNode.Advertiser)
-				ad.advertiser = adFast.node.InLine.node.Advertiser.innerData;
-			if (adFast.node.InLine.hasNode.Description)
-				ad.description = adFast.node.InLine.node.Description.innerData;
-			if (adFast.node.InLine.hasNode.Error)
-				ad.errors = getErrors(adFast.node.InLine.nodes.Error);
-			if (adFast.node.InLine.hasNode.Extensions)
-				ad.extensions = getExtensions(adFast.node.InLine.node.Extensions);
-			if (adFast.node.InLine.hasNode.Pricing)
-				ad.pricing = getPricing(adFast.node.InLine.node.Pricing);
+			if (inLine.hasNode.Advertiser)
+				ad.advertiser = inLine.node.Advertiser.innerData;
+			if (inLine.hasNode.Description)
+				ad.description = inLine.node.Description.innerData;
+			if (inLine.hasNode.Error)
+				ad.errors = getErrors(inLine.nodes.Error);
+			if (inLine.hasNode.Extensions)
+				ad.extensions = getExtensions(inLine.node.Extensions);
+			if (inLine.hasNode.Pricing)
+				ad.pricing = getPricing(inLine.node.Pricing);
 			if (adFast.has.sequence)
 				ad.sequence = Std.parseInt(adFast.att.sequence);
-			if (adFast.node.InLine.hasNode.Survey)
-				ad.survey = adFast.node.InLine.node.Survey.innerData;
+			if (inLine.hasNode.Survey)
+				ad.survey = inLine.node.Survey.innerData;
 			
 			result.push(ad);
 		}
@@ -248,8 +263,12 @@ class VAST_3_0 implements IParser
 		for (linearFast in linears) 
 		{
 			var linear:Linear = new Linear();
-			linear.duration = TimeTool.convertTimeToSeconds(linearFast.node.Duration.innerData);
-			linear.mediaFiles = getMediaFiles(linearFast.node.MediaFiles.nodes.MediaFile);
+			linear.duration = linearFast.hasNode.Duration && linearFast.node.Duration.hasNode.innerData
+				? TimeTool.convertTimeToSeconds(linearFast.node.Duration.innerData)
+				: 0;
+			linear.mediaFiles = linearFast.hasNode.MediaFiles && linearFast.node.MediaFiles.hasNode.MediaFile
+				? getMediaFiles(linearFast.node.MediaFiles.nodes.MediaFile)
+				: null;
 			
 			if (linearFast.has.skipoffset)
 				linear.skipoffset = TimeTool.convertOffsetToSeconds(linearFast.att.skipoffset, linear.duration);
@@ -344,6 +363,13 @@ class VAST_3_0 implements IParser
 		var result = new Array<MediaFile>();
 		for (mediaFileFast in mediaFiles) 
 		{
+
+			if (!mediaFileFast.has.delivery) {
+				trace('Media File requied "delivery" attribute is missing');
+				error(VastError.CODE_400);
+				break;
+			}
+
 			var mediaFile = new MediaFile(MediaFile.getDeliveryType(mediaFileFast.att.delivery));
 			//requierd
 			mediaFile.url = mediaFileFast.innerData;

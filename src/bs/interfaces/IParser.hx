@@ -7,5 +7,5 @@ import haxe.Constraints.Function;
  */
 interface IParser 
 {
-	function parse(xml:Xml):Vast;
+	function parse(xml:Xml, onError:Dynamic->Void):Vast;
 }

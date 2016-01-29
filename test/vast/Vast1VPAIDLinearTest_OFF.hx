@@ -7,7 +7,16 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
 
-class Vast1VPAIDLinearTest
+class Vast1VPAIDLinearTest_OFF extends Tests
+{
+	public function new() { super(); }
+
+	@AsyncTest
+	public function test(factory:AsyncFactory):Void {
+		super.vast(factory,'examples/vast2/vast_inline_linear.xml');
+	}
+
+}
 {
 	var asyncHandler:Dynamic;
 	var vastAss:Asserts;
