@@ -1,6 +1,8 @@
 package bs.parser;
+import bs.model.vast.ad.creatives.nonlinears.NonLinearAds;
+import haxe.xml.Fast;
+import bs.tools.Delimiter;
 import bs.model.VastError;
-import bs.interfaces.ICreativeDetails;
 import bs.interfaces.IParser;
 import bs.model.vast.ad.Ad;
 import bs.model.vast.ad.AdSystem;
@@ -8,7 +10,6 @@ import bs.model.vast.ad.creatives.AdParameters;
 import bs.model.vast.ad.creatives.Click;
 import bs.model.vast.ad.creatives.companion.Companion;
 import bs.model.vast.ad.creatives.Creative;
-import bs.model.vast.ad.creatives.CreativeDetails;
 import bs.model.vast.ad.creatives.CreativeExtension;
 import bs.model.vast.ad.creatives.linear.Icon;
 import bs.model.vast.ad.creatives.linear.IconViewTracking;
@@ -23,8 +24,6 @@ import bs.model.vast.ad.Impression;
 import bs.model.vast.ad.Pricing;
 import bs.model.vast.Vast;
 import bs.tools.TimeTool;
-import haxe.Constraints.Function;
-import haxe.xml.Fast;
 
 /**
  * ...
@@ -57,8 +56,6 @@ class VAST_3_0 implements IParser
 		for (adFast in ads) 
 		{
 //			var ad:Ad = new Ad();
-
-			//Requierd
 //			ad.id = adFast.att.id;
 //			ad.impressions = getImpressions(adFast.node.InLine.nodes.Impression);
 //			ad.system = getAdSystem(adFast.node.InLine.node.AdSystem);
@@ -66,28 +63,38 @@ class VAST_3_0 implements IParser
 //			ad.creatives = getCreatives(adFast.node.InLine.node.Creatives.nodes.Creative);
 
 			var inLine = adFast.node.InLine;
+
 			var ad:Ad = new Ad();
-			ad.id = adFast.has.id ? adFast.att.id : '';
+			if (adFast.has.ids)
+				ad.ids = adFast.att.ids.split(Delimiter.array);
+
+			//Requierd
+			ad.id = adFast.att.id;
 			ad.impressions = getImpressions(inLine.nodes.Impression);
-			ad.system = inLine.hasNode.AdSystem ? getAdSystem(inLine.node.AdSystem) : null;
-			ad.title = inLine.hasNode.AdTitle && inLine.node.AdTitle.hasNode.innerData ?
-				inLine.node.AdTitle.innerData : '';
-			ad.creatives = inLine.hasNode.Creatives && inLine.node.Creatives.hasNode.Creative ?
-				getCreatives(inLine.node.Creatives.nodes.Creative) : null;
+			ad.system = getAdSystem(inLine.node.AdSystem);
+			ad.title = inLine.node.AdTitle.innerData;
+			ad.creatives = getCreatives(inLine.node.Creatives.nodes.Creative);
+
+			//Requierd in VAST 3.0
+			if (adFast.has.sequence)
+				ad.sequence = Std.parseInt(adFast.att.sequence);
 
 			//Optional
 			if (inLine.hasNode.Advertiser)
 				ad.advertiser = inLine.node.Advertiser.innerData;
+
 			if (inLine.hasNode.Description)
 				ad.description = inLine.node.Description.innerData;
+
 			if (inLine.hasNode.Error)
 				ad.errors = getErrors(inLine.nodes.Error);
+
 			if (inLine.hasNode.Extensions)
 				ad.extensions = getExtensions(inLine.node.Extensions);
+
 			if (inLine.hasNode.Pricing)
 				ad.pricing = getPricing(inLine.node.Pricing);
-			if (adFast.has.sequence)
-				ad.sequence = Std.parseInt(adFast.att.sequence);
+
 			if (inLine.hasNode.Survey)
 				ad.survey = inLine.node.Survey.innerData;
 			
@@ -122,10 +129,10 @@ class VAST_3_0 implements IParser
 	function getErrors(errors:List<Fast>):Array<Error> 
 	{
 		var result = new Array<Error>();
-		for (errorFast in errors ) 
-		{
+		for (errorFast in errors){
 			var error = new Error();
 			error.url = errorFast.innerData;
+			result.push(error);
 		}
 		return result;
 	}
@@ -146,23 +153,26 @@ class VAST_3_0 implements IParser
 				creative.apiFramework = creativeFast.att.apiFramework;
 			if (creativeFast.hasNode.creativeExtensions) 
 				creative.creativeExtensions = getCreativeExtensions(creativeFast.node.CreativeExtensions.nodes.CreativeExtension);
-			if (creativeFast.hasNode.Linear) 
+
+			if (creativeFast.hasNode.Linear)
 				creative.details = cast getLinear(creativeFast.nodes.Linear);
 			if (creativeFast.hasNode.CompanionAds) 
 				creative.details = cast getCompanionAds(creativeFast.node.CompanionAds.nodes.Companion);
 			if (creativeFast.hasNode.NonLinearAds) 
-				creative.details = cast getNonLinearAds(creativeFast.node.NonLinearAds.nodes.NonLinear);
-			
+				creative.details = cast getNonLinearAds(creativeFast.node.NonLinearAds);
+//				creative.details = cast getNonLinearAds(creativeFast.node.NonLinearAds.nodes.NonLinear);
+
 			result.push(creative);
 		}
 		
 		return result;
 	}
 	
-	function getNonLinearAds(nonLinears:List<Fast>):Array<NonLinear>
+	function getNonLinearAds(nonLinearAds:Fast):NonLinearAds
 	{
-		var result = new Array<NonLinear>();
-		for (nonLinearFast in nonLinears) 
+		var result = new NonLinearAds();
+		result.nonLinear = new Array<NonLinear>();
+		for (nonLinearFast in nonLinearAds.nodes.NonLinear)
 		{
 			var nonLinear = new NonLinear();
 			//requierd
@@ -188,7 +198,13 @@ class VAST_3_0 implements IParser
 				nonLinear.apiFramework = nonLinearFast.att.apiFramework;
 			if (nonLinearFast.hasNode.AdParameters)
 				nonLinear.adParameters = getAdParameters(nonLinearFast.node.AdParameters);
+
+			result.nonLinear.push(nonLinear);
 		}
+
+		if (nonLinearAds.hasNode.TrackingEvents)
+			result.trackingEvents = getTrackingEvents(nonLinearAds.node.TrackingEvents.nodes.Tracking);
+
 		return result;
 	}
 	
@@ -263,13 +279,16 @@ class VAST_3_0 implements IParser
 		for (linearFast in linears) 
 		{
 			var linear:Linear = new Linear();
-			linear.duration = linearFast.hasNode.Duration && linearFast.node.Duration.hasNode.innerData
-				? TimeTool.convertTimeToSeconds(linearFast.node.Duration.innerData)
-				: 0;
-			linear.mediaFiles = linearFast.hasNode.MediaFiles && linearFast.node.MediaFiles.hasNode.MediaFile
-				? getMediaFiles(linearFast.node.MediaFiles.nodes.MediaFile)
-				: null;
-			
+//			linear.duration = linearFast.hasNode.Duration && linearFast.node.Duration.hasNode.innerData
+//				? TimeTool.convertTimeToSeconds(linearFast.node.Duration.innerData)
+//				: 0;
+//			linear.mediaFiles = linearFast.hasNode.MediaFiles && linearFast.node.MediaFiles.hasNode.MediaFile
+//				? getMediaFiles(linearFast.node.MediaFiles.nodes.MediaFile)
+//				: null;
+
+			linear.duration = TimeTool.convertTimeToSeconds(linearFast.node.Duration.innerData);
+			linear.mediaFiles = getMediaFiles(linearFast.node.MediaFiles.nodes.MediaFile);
+
 			if (linearFast.has.skipoffset)
 				linear.skipoffset = TimeTool.convertOffsetToSeconds(linearFast.att.skipoffset, linear.duration);
 			if(linearFast.hasNode.TrackingEvents)
@@ -367,13 +386,13 @@ class VAST_3_0 implements IParser
 			if (!mediaFileFast.has.delivery) {
 				trace('Media File requied "delivery" attribute is missing');
 				error(VastError.CODE_400);
-				break;
+				//break;
 			}
 
 			var mediaFile = new MediaFile(MediaFile.getDeliveryType(mediaFileFast.att.delivery));
 			//requierd
 			mediaFile.url = mediaFileFast.innerData;
-			mediaFile.type = MIMETypeTool.getType(mediaFileFast.att.delivery);
+			mediaFile.type = MIMETypeTool.getType(mediaFileFast.att.type);
 			mediaFile.width = Std.parseFloat(mediaFileFast.att.width);
 			mediaFile.height = Std.parseFloat(mediaFileFast.att.height);
 			
@@ -495,6 +514,7 @@ class VAST_3_0 implements IParser
 			trakcing.url = trackingFast.innerData;
 			result.push(trakcing);
 		}
+
 		
 		return result;
 	}

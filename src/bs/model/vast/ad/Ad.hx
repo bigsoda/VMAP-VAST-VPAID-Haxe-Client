@@ -15,6 +15,10 @@ class Ad
 	 */
 	public var id:String;
 	/**
+	* id's collected from wrappers
+	*/
+	public var ids:Array<String>;
+	/**
 	 * a number greater than zero (0) that identifies the sequence in which an ad should play; all <Ad> elements with sequence values are part of a pod and are intended to be played in sequence
 	 */
 	public var sequence:Int;

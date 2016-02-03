@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAST version="2.0">
+
+    <Ad id="wrapper2">
+        <Wrapper>
+
+            <AdSystem>wrapper 2</AdSystem>
+
+            <VASTAdTagURI>web/examples/vastInLine.xml</VASTAdTagURI>
+
+            <Impression>http://myTrackingURL/wrapper/impression</Impression>
+
+            <Creatives>
+
+                <Creative AdID="wrapper2.creative1.Linear">
+                    <Linear>
+                        <TrackingEvents>
+                            <Tracking event="creativeView">http:///wrapper2/Linear/tracking/creative1/1</Tracking>
+                        </TrackingEvents>
+                    </Linear>
+                </Creative>
+
+            </Creatives>
+
+        </Wrapper>
+    </Ad>
+
+</VAST>

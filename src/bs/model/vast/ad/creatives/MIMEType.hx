@@ -25,6 +25,7 @@ class  MIMETypeTool
 						"video/f4m" => MIMEType.VIDEO_F4M,
 						"application/x-shockwave-flash" => MIMEType.APPLICATION_X_SHOCKWAVE_FLASH,
 						"application/x-javascript" => MIMEType.APPLICATION_X_JAVASCRIPT,
+						"application/x-mpegURL" => MIMEType.APPLICATION_X_MPEGURL,
 						"image/jpeg" => MIMEType.IMAGE_JPEG,
 						"image/gif" => MIMEType.IMAGE_GIF,
 						"image/png" => MIMEType.IMAGE_PNG];
@@ -38,6 +39,7 @@ enum MIMEType
 	VIDEO_F4M;
 	APPLICATION_X_SHOCKWAVE_FLASH;
 	APPLICATION_X_JAVASCRIPT;
+	APPLICATION_X_MPEGURL;
 	IMAGE_JPEG;
 	IMAGE_GIF;
 	IMAGE_PNG;

@@ -1,13 +1,12 @@
 package vast;
 
-import vast.Asserts;
 import bs.model.vast.Vast;
 import bs.vast.VASTClient;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
 
-class Vast1VPAIDLinearTest_OFF extends Tests
+class Vast1RegularLinearTest_OFF extends Tests
 {
 	public function new() { super(); }
 
@@ -31,7 +30,7 @@ class Vast1VPAIDLinearTest_OFF extends Tests
 	@AsyncTest
 	public function getVAST(factory:AsyncFactory):Void {
 		asyncHandler = factory.createHandler(this, vastAss.start, 6000);
-		VASTClient.getVast('http://localhost:9999/vast/vast1VPAIDLinear.xml', parseVAST, vastAss.error);
+		VASTClient.getVast('http://localhost:9999/vast/vast1RegularLinear.xml', parseVAST, vastAss.error);
 	}
 
 	function parseVAST(data:Xml):Void {

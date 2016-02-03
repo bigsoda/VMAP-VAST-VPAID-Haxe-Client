@@ -35,7 +35,9 @@ class Tracking
 						"exitFullscreen" => TrackingEvent.EXIT_FULLSCREEN,
 						"expand" => TrackingEvent.EXPAND,
 						"collapse" => TrackingEvent.COLLAPSE,
+						"acceptInvitation" => TrackingEvent.ACCEPT_INVITATION_NONLINEAR,
 						"acceptInvitationLinear" => TrackingEvent.ACCEPT_INVITATION_LINEAR,
+						"close" => TrackingEvent.CLOSE_NONLINEAR,
 						"closeLinear" => TrackingEvent.CLOSE_LINEAR,
 						"skip" => TrackingEvent.SKIP,
 						"progress" => TrackingEvent.PROGRESS];
@@ -108,9 +110,17 @@ enum TrackingEvent
 	 */
 	ACCEPT_INVITATION_LINEAR;
 	/**
-	 * the user clicked the close button on the creative. The name of this event distinguishes it from the existing “close” event described in the 2008 IAB Digital Video In-Stream Ad Metrics Definitions, which defines the "close" metric as applying to non-linear ads only. The "closeLinear" event extends the "close" event for use in Linear creative
+	* Indicates that the user clicks or otherwise activates a control to expand the viewable area (or “take-over” the video content area) and launch an additional portion of the ad. A video ad is usually played upon acceptance, but other types of formats, including rich media, are also used.
+	*/
+	ACCEPT_INVITATION_NONLINEAR;
+	/**
+	 * the user clicked the close button on the creative. The name of this event distinguishes it from the existing “close” event described in the 2008 IAB Digital Video In-Stream Ad Metrics Definitions, which defines the "close" metric as applying to non-linear ads only. The "closeLinear" event extends the "close" event for use in Linear creative [ref: http://www.iab.net/media/file/DV_In-Stream_Metrics_Definitions.pdf]
 	 */
 	CLOSE_LINEAR;
+	/**
+	* Indicates that the user clicks or otherwise activates a Close control which fully dispatches the ad from the player environment. May not apply to non-overlay ads. [ref: http://www.iab.net/media/file/DV_In-Stream_Metrics_Definitions.pdf]
+	*/
+	CLOSE_NONLINEAR;
 	/**
 	 * the user activated a skip control to skip the creative, which is a different control than the one used to close the creative.
 	 */

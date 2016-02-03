@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAST version="2.0">
+
+    <Ad id="wrapper1">
+        <Wrapper>
+
+            <AdSystem>wrapper 1</AdSystem>
+
+            <VASTAdTagURI>web/examples/vastWrapper2.xml</VASTAdTagURI>
+
+            <Impression>http://myTrackingURL/wrapper/impression</Impression>
+
+            <Creatives>
+
+                <Creative AdID="wrapper1.creative1.Linear">
+                    <Linear>
+                        <TrackingEvents>
+                            <Tracking event="creativeView">http://wrapper1/Linear/tracking/creative1/1</Tracking>
+                        </TrackingEvents>
+                        <VideoClicks>
+                            <ClickThrough>http://wrapper1/Linear/videoClick/creative1/clickThrough</ClickThrough>
+                            <ClickTracking>http://wrapper1/Linear/videoClick/creative1/clickTracking</ClickTracking>
+                        </VideoClicks>
+                    </Linear>
+                </Creative>
+
+                <Creative AdID="wrapper1.creative2.NonLinearAds">
+                    <NonLinearAds>
+                        <TrackingEvents>
+                            <Tracking event="creativeView">http://NonLinearAds/tracking/wrapper1/creative2/1</Tracking>
+                        </TrackingEvents>
+                    </NonLinearAds>
+                </Creative>
+
+
+            </Creatives>
+
+        </Wrapper>
+    </Ad>
+
+</VAST>

@@ -7,7 +7,7 @@ import bs.model.vast.ad.creatives.Resource;
  * ...
  * @author Piotr Skolysz <piotr.skolysz@bigsoda.pl>
  */
-class NonLinear implements ICreativeDetails 
+class NonLinear //implements ICreativeDetails
 {
 	/**
 	 * an optional identifier for the creative
@@ -57,7 +57,6 @@ class NonLinear implements ICreativeDetails
 	 * used to pass information to the creative unit; includes the attribute xmlEncoded that is a Boolean value for identifying whether the <AdParameters> value is xml encoded.
 	 */
 	public var adParameters:AdParameters;
-	
 
 	public function new() 
 	{

@@ -1,4 +1,6 @@
 package bs.parser;
+import haxe.ds.StringMap;
+import bs.tools.Delimiter;
 import bs.model.HttpError;
 import bs.model.VastError;
 import bs.tools.Trace;
@@ -44,6 +46,10 @@ class Wrapper
 		error = onError;
 		warn = onWarn;
 		checkForWrappers(vast);
+
+		// added ids attribute to Ad tag for collecting Ad ids
+		for (ad in orginalVast.firstElement().elementsNamed('Ad'))
+			ad.set('ids', ad.get('id'));
 	}
 	
 	
@@ -131,7 +137,7 @@ class Wrapper
 //		}
 
 		if (!fastWrapper.hasNode.Ad || (!fastWrapper.node.Ad.hasNode.Wrapper && !fastWrapper.node.Ad.hasNode.InLine)) {
-			removeWrapperTag(orginalVast);
+			removeWrapperTag();
 			checkForWrappers(orginalVast);
 			warn(VastError.CODE_303);
 			//Trace.log("mergeVast - IF");
@@ -140,6 +146,14 @@ class Wrapper
 
 		for (ad in orginalVast.firstElement().elementsNamed("Ad")) {
 			if (ad.firstElement().nodeName == "Wrapper") {
+
+				// added ids attribute to Ad tag for collecting Ad ids
+				ad.set('ids', ad.get('ids') + Delimiter.array + fastWrapper.node.Ad.att.id);
+
+				// set closest to InLine Ad id
+				if (fastWrapper.hasNode.Ad && fastWrapper.node.Ad.has.id)
+					ad.set('id', fastWrapper.node.Ad.att.id);
+
 				orginalWrapper = ad.firstElement();
 				//removed orginal wrapper
 				ad.removeChild(orginalWrapper);
@@ -154,7 +168,7 @@ class Wrapper
 		checkForWrappers(orginalVast);
 	}
 	
-	static private function removeWrapperTag(xml:Xml):Void 
+	static private function removeWrapperTag():Void
 	{
 		var orginalAd = Xml.parse("");
 		for (ad in orginalVast.firstElement().elementsNamed("Ad")) {
@@ -174,43 +188,295 @@ class Wrapper
 	
 	static private function addOldTags(ad:Xml, orginalWrapper:Xml):Void 
 	{
-		
-		var fastAd:Fast = new Fast(ad);
-		var fastWrapper:Fast = new Fast(orginalWrapper);
-		
-		adImpression(ad, orginalWrapper);
-		addError(ad, orginalWrapper);
-		addCreatives(ad, orginalWrapper);
-		//Extensions
+		var adFast = new Fast(ad.firstElement());
+		var wrapperFast = new Fast(orginalWrapper);
+
+		adImpressions(ad, orginalWrapper);
+		addErrors(ad, orginalWrapper);
+
+		addCreatives(adFast, wrapperFast);
+		addExtensions(adFast, wrapperFast);
+
+//		log('__>_____________________________');
+//		log(adFast.x.toString());
+//		log('__<_____________________________');
 	}
 	
-	static private function adImpression(ad:Xml, wrapper:Xml) 
+	static private function adImpressions(ad:Xml, wrapper:Xml)
 	{
 		for (impression in wrapper.elementsNamed("Impression")) {
 			ad.firstElement().addChild(impression);
 		}
 	}
 	
-	static private function addError(ad:Xml, wrapper:Xml) 
+	static private function addErrors(ad:Xml, wrapper:Xml)
 	{
 		for (error in wrapper.elementsNamed("Error")) {
 			ad.firstElement().addChild(error);
 		}
 	}
-	
-	static private function addCreatives(ad:Xml, wrapper:Xml) 
-	{
-		var adFast = new Fast(ad.firstElement());
-		var wrapperFast = new Fast(wrapper);
 
-		if (wrapperFast.hasNode.Creatives)
-			if (adFast.hasNode.Creatives)
-				for (creative in wrapperFast.node.Creatives.elements)
-					adFast.node.Creatives.x.addChild(creative.x);
+	static private function addExtensions(adFast:Fast, wrapperFast:Fast) {
+		if (wrapperFast.hasNode.Extensions)
+			if (!adFast.hasNode.Extensions)
+				adFast.x.addChild(wrapperFast.node.Extensions.x);
 			else
-				adFast.x.addChild(wrapperFast.node.Creatives.x);
+				for (ext in wrapperFast.node.Extensions.elements)
+					adFast.node.Extensions.x.addChild(ext.x);
+	}
 
-		/*
+	static private function addCreatives(adFast:Fast, wrapperFast:Fast) {
+		var adHasCreatives = adFast.hasNode.Creatives;
+		var wrapperHasCreatives = wrapperFast.hasNode.Creatives;
+
+		if (wrapperHasCreatives) {
+			if (!adHasCreatives) {
+				adFast.x.addChild(wrapperFast.node.Creatives.x);
+			} else {
+				var wrapperCreativesData = searchCreativesInWrapper(wrapperFast.node.Creatives);
+				var adCreativesFast = adFast.node.Creatives;
+				for (wrapperCreative in wrapperCreativesData) {
+					for (adCreativeFast in adCreativesFast.nodes.Creative)
+						for (adCreativesNamed in adCreativeFast.x.elementsNamed(wrapperCreative.name))
+							mergeWrapperCreatives(adCreativesNamed, wrapperCreative);
+					if (!wrapperCreative.used)
+						addNewWrapperCreatives(adCreativesFast.x, wrapperCreative);
+				}
+			}
+		}
+	}
+
+	static private function searchCreativesInWrapper(wrapperCreatives:Fast):Array<CreativeData>
+	{
+		var creatives:Array<CreativeData> = [];
+		for (creative in wrapperCreatives.nodes.Creative) {
+			var cNode = creative.x.firstElement();
+			var cData:CreativeData = { used:false, name:cNode.nodeName, data:[], attributes:new StringMap<String>() };
+			for (attName in creative.x.attributes())
+				cData.attributes.set(attName, creative.x.get(attName));
+			for (cNodeElement in cNode.elements()) {
+				var cDataNode = { name:cNodeElement.nodeName, data:cNodeElement.elements(), attributes:new StringMap<String>() };
+				for (attName in cNodeElement.attributes())
+					cDataNode.attributes.set(attName, cNodeElement.get(attName));
+				cData.data.push(cDataNode);
+			}
+			creatives.push(cData);
+		}
+//		log(creatives);
+		return creatives;
+	}
+
+	static private function mergeWrapperCreatives(adCreatives:Xml, creativeData:CreativeData):Void
+	{
+//		log('merge ' + creativeData.name);
+		//if (creativeData.name != 'CompanionAds') {
+			creativeData.used = true;
+			for (creativeDataNode in creativeData.data) {
+				var elementsFoundedByName = adCreatives.elementsNamed(creativeDataNode.name);
+				if (!elementsFoundedByName.hasNext()) {
+					adCreatives.addChild(Xml.createElement(creativeDataNode.name));
+					elementsFoundedByName = adCreatives.elementsNamed(creativeDataNode.name);
+				}
+				for (elementsNamed in elementsFoundedByName)
+					for (addNode in creativeDataNode.data)
+						elementsNamed.addChild(addNode);
+			}
+
+		//}
+	}
+
+	static private function addNewWrapperCreatives(adCreatives:Xml, creativeData:CreativeData):Void
+	{
+//		log('add new ' + creativeData.name);
+		var newCreativeXml = Xml.createElement('Creative');
+		for (attName in creativeData.attributes.keys())
+			newCreativeXml.set(attName, creativeData.attributes.get(attName));
+		var newCreativeTypeXml = Xml.createElement(creativeData.name);
+
+		for (creativeDataNode in creativeData.data) {
+
+			var newCreativeNodeXml = Xml.createElement(creativeDataNode.name);
+
+			for (attName in creativeDataNode.attributes.keys())
+				newCreativeNodeXml.set(attName, creativeDataNode.attributes.get(attName));
+
+			for (creativeDataNodeElement in creativeDataNode.data) {
+//				log('add child '+ creativeDataNodeElement.toString());
+				newCreativeNodeXml.addChild(creativeDataNodeElement);
+			}
+
+			newCreativeTypeXml.addChild(newCreativeNodeXml);
+		}
+		newCreativeXml.addChild(newCreativeTypeXml);
+		adCreatives.addChild(newCreativeXml);
+	}
+
+
+
+			/*
+				//SEARCH IN WRAPPER
+				var wCreatives:Array<Dynamic> = [];
+				for (wCreative in wrapperFast.node.Creatives.elements) {
+					var wFirstElement = new Fast(wCreative.x.firstElement());
+
+					var cre = {};
+					//SEARCH FOR LINEAR/NON_LINEAR_ADS
+					if (wFirstElement.name == 'Linear' || wFirstElement.name == 'NonLinearAds') {
+						// SEARCH FOR 'TrackingEvents'
+						if (wFirstElement.hasNode.TrackingEvents) {
+							var te:Array<Xml> = [];
+							for (wte in wFirstElement.node.TrackingEvents.elements)
+								te.push(wte.x);
+//							log('TrackingEvents: ' + te);
+							if (te.length > 0) {
+								if (!Reflect.hasField(cre, 'name'))
+									Reflect.setField(cre, 'name', wFirstElement.name);
+								Reflect.setField(cre, 'trackingEvents', te);
+							}
+						}
+					}
+					//SEARCH FOR LINEAR
+					if (wFirstElement.name == 'Linear') {
+						// SEARCH FOR 'VideoClicks'
+						if (wFirstElement.hasNode.VideoClicks) {
+							var vc:Array<Xml> = [];
+							for (wte in wFirstElement.node.VideoClicks.elements)
+								vc.push(wte.x);
+//							log('VideoClicks: ' + vc);
+							if (vc.length > 0) {
+								if (!Reflect.hasField(cre, 'name'))
+									Reflect.setField(cre, 'name', wFirstElement.name);
+								Reflect.setField(cre, 'videoClicks', vc);
+							}
+						}
+						// SEARCH FOR 'Icons'
+						if (wFirstElement.hasNode.Icons) {
+							var ic:Array<Xml> = [];
+							for (wte in wFirstElement.node.Icons.elements)
+								ic.push(wte.x);
+//							log('Icons: ' + ic);
+							if (ic.length > 0) {
+								if (!Reflect.hasField(cre, 'name'))
+									Reflect.setField(cre, 'name', wFirstElement.name);
+								Reflect.setField(cre, 'icons', ic);
+							}
+						}
+					}
+					//SEARCH FOR NON_LINEAR_ADS
+					if (wFirstElement.name == 'NonLinearAds') {
+						// SEARCH FOR 'NonLinear'
+						if (wFirstElement.hasNode.NonLinear) {
+							var nl:Array<Xml> = [];
+							for (wte in wFirstElement.node.NonLinear.elements)
+								nl.push(wte.x);
+//							log('NonLinear: ' + nl);
+							if (nl.length > 0) {
+								if (!Reflect.hasField(cre, 'name'))
+									Reflect.setField(cre, 'name', wFirstElement.name);
+								Reflect.setField(cre, 'nonLinear', nl);
+							}
+						}
+					}
+					//TODO:
+					//SEARCH FOR COMPANION_ADS
+					if (wFirstElement.name == 'CompanionAds') {
+						// SEARCH FOR 'Companion'
+						var cp:Array<Xml> = [];
+						for (comp in wFirstElement.elements)
+							cp.push(comp.x);
+						if (cp.length > 0) {
+							if (!Reflect.hasField(cre, 'name'))
+								Reflect.setField(cre, 'name', wFirstElement.name);
+							Reflect.setField(cre, 'companion', cp);
+						}
+					}
+					if (Reflect.hasField(cre, 'name'))
+						wCreatives.push(cre);
+
+				}
+
+				//// ADD TO ORIGINAL
+				for (wCreative in wCreatives) {
+					for (adCreative in adFast.node.Creatives.nodes.Creative) {
+						if (adCreative.x.elementsNamed(wCreative.name).hasNext()) {
+
+							log('ADD TO EXISTING: ' + wCreative.name);
+
+							for (adCreativeFirst in adCreative.x.elementsNamed(wCreative.name)) {
+								var adCreativeFirstFast = new Fast(adCreativeFirst);
+
+								// MERGE 'TrackingEvents'
+								addToExistingCreative(adCreativeFirstFast,'TrackingEvents', wCreative);
+//								if (Reflect.hasField(wCreative, 'trackingEvents')) {
+//									if (!adCreativeFirstFast.hasNode.TrackingEvents)
+//										adCreativeFirstFast.x.addChild(Xml.parse('<TrackingEvents/>'));
+//									for (idx in 0...wCreative.trackingEvents.length)
+//										adCreativeFirstFast.node.TrackingEvents.x.addChild(wCreative.trackingEvents[idx]);
+//								}
+								// MERGE 'videoClicks'
+								if (Reflect.hasField(wCreative,'videoClicks')) {
+									if (!adCreativeFirstFast.hasNode.VideoClicks)
+										adCreativeFirstFast.x.addChild(Xml.parse('<VideoClicks/>'));
+									for (idx in 0...wCreative.videoClicks.length)
+										adCreativeFirstFast.node.VideoClicks.x.addChild(wCreative.videoClicks[idx]);
+								}
+								// MERGE 'icons'
+								if (Reflect.hasField(wCreative,'icons')) {
+									if (!adCreativeFirstFast.hasNode.Icons)
+										adCreativeFirstFast.x.addChild(Xml.parse('<Icons/>'));
+									for (idx in 0...wCreative.icons.length)
+										adCreativeFirstFast.node.Icons.x.addChild(wCreative.icons[idx]);
+								}
+								// MERGE 'NonLinear'
+								if (Reflect.hasField(wCreative,'nonLinear')) {
+									if (!adCreativeFirstFast.hasNode.NonLinear)
+										adCreativeFirstFast.x.addChild(Xml.parse('<NonLinear/>'));
+									for (idx in 0...wCreative.nonLinear.length)
+										adCreativeFirstFast.node.NonLinear.x.addChild(wCreative.nonLinear[idx]);
+								}
+								// MERGE 'Companion'
+								if (Reflect.hasField(wCreative,'companion')) {
+									if (!adCreativeFirstFast.hasNode.Companion)
+										adCreativeFirstFast.x.addChild(Xml.parse('<Companion/>'));
+									for (idx in 0...wCreative.companion.length)
+										adCreativeFirstFast.node.Companion.x.addChild(wCreative.companion[idx]);
+								}
+							}
+
+						} else {
+							log('ADD NEW: ' + wCreative.name);
+							addNewCreative(adFast, 'companion', wCreative);
+						}
+					}
+				}
+			*/
+
+//	static private function addToExistingCreative(adFast:Fast, name:String, creativeData:Dynamic):Void {
+//
+//
+//		if (Reflect.hasField(creativeData, 'trackingEvents')) {
+//			if (!adFast.hasNode.TrackingEvents)
+//				adFast.x.addChild(Xml.parse('<TrackingEvents/>'));
+//			for (idx in 0...creativeData.trackingEvents.length)
+//				adFast.node.TrackingEvents.x.addChild(creativeData.trackingEvents[idx]);
+//		}
+//
+//
+//	}
+//
+//	static private function addNewCreative(adFast:Fast, name:String, creativeData:Dynamic):Void {
+//		if (Reflect.hasField(creativeData, name)) {
+//			var newCreative = Xml.parse('<Creative><${creativeData.name}/></Creative>');
+//			var data:Array<Xml> = Reflect.field(creativeData, name);
+//			for (idx in 0...data.length)
+//				newCreative.firstElement().addChild(data[idx]);
+//
+//			adFast.node.Creatives.x.addChild(newCreative);
+//		}
+//	}
+
+	/*
+	static private function addCreatives(adFast:Fast, wrapperFast:Fast) {
 		var adHasCreatives = ad.firstElement().elementsNamed("Creatives").hasNext();
 		var wrapperHasCreatives = wrapper.elementsNamed("Creatives").hasNext();
 		//Trace.logColor("adHasCreatives: " + adHasCreatives +", wrapperHasCreatives: " + wrapperHasCreatives);
@@ -224,8 +490,6 @@ class Wrapper
 				//Linear Tracking
 				//Trace.xmlFromString(ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().toString());
 				//ad.firstElement().elementsNamed("Creatives").next().addChild(creative);
-
-
 
 				for (tracking in creative.elementsNamed("Linear").next().elementsNamed("TrackingEvents").next().elementsNamed("Tracking")) {
 					//TODO Ad doesn't have Tracking event
@@ -256,21 +520,36 @@ class Wrapper
 				
 			}
 		}
-		*/
 	}
-	
-	/*static function newXMLHttpRequest(): XMLHttpRequest
+
+
+	/*
+	static function newXMLHttpRequest(): XMLHttpRequest
 	{
 		if (requestFactory) {
 			return Type.createInstance(requestFactory, []);
 		}
 		return new XMLHttpRequest();
-	}*/
+	}
+	*/
+
 	static function log(data:Dynamic):Void
 	{
 		#if js
 		js.Browser.console.info(data);
 		#end
-		trace(data);
+		//trace(data);
 	}
+}
+
+typedef CreativeData = {
+	var used:Bool;
+	var name:String;
+	var attributes:StringMap<String>;
+	var data:Array<CreativeDataNode>;
+}
+typedef CreativeDataNode = {
+	var name:String;
+	var attributes:StringMap<String>;
+	var data:Iterator<Xml>;
 }
