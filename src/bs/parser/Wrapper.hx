@@ -287,18 +287,13 @@ class Wrapper
 	static private function mergeWrapperCreatives(adCreatives:Xml, creativeData:CreativeData):Void
 	{
 		creativeData.used = true;
-
-		//TODO: merge AdID s not working properly
-
-		if (creativeData.attributes.exists('AdIDs'))
-		{
+		if (creativeData.attributes.exists('AdIDs')) {
 			adCreatives.parent.set('AdIDs',
 				adCreatives.parent.get('AdID')
 				+ Delimiter.array
 				+ creativeData.attributes.get('AdIDs'));
 		}
-		else if (creativeData.attributes.exists('AdID'))
-		{
+		else if (creativeData.attributes.exists('AdID')) {
 			if (adCreatives.parent.exists('AdIDs'))
 				adCreatives.parent.set('AdIDs',
 				adCreatives.parent.get('AdIDs')
