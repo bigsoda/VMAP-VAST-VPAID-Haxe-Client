@@ -26,8 +26,9 @@
             <!--<arg line="-filter vast.Vast3Test"/>-->
             <!--<arg line="-filter vast.Vast2WrapperTest"/>-->
             <!--<arg line="-filter vast.Vast2WrapperNonLinear2Test"/>-->
-            <arg line="-filter vast.Vast2WrapperMergeTest"/>
+            <!--<arg line="-filter vast.Vast2WrapperNonLinear1Test"/>-->
 
+            <arg line="-filter vast.Vast2WrapperMergeTest"/>
 
             <!--<arg line="-debug"/>-->
         </exec>

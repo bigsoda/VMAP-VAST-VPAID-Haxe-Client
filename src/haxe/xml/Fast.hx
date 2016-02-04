@@ -108,6 +108,8 @@ private class NodeListAccess implements Dynamic<List<Fast>> {
 
 class Fast {
 
+	static public var ignoreWhitespace = true;
+
 	public var x(default,null) : Xml;
 	public var name(get,null) : String;
 	public var innerData(get,null) : String;
@@ -143,17 +145,23 @@ class Fast {
 		if( n != null ) {
 			// handle <spaces>CDATA<spaces>
 			if( n.nodeType == Xml.PCData && v.nodeType == Xml.CData && StringTools.trim(v.nodeValue).length > 0 )
-				return StringTools.trim(v.nodeValue);
+				return formatInnerData(v.nodeValue);
 			if( v.nodeType == Xml.PCData && n.nodeType == Xml.CData && StringTools.trim(v.nodeValue) == "" ) {
 				var n2 = it.next();
 				if( n2 == null || (n2.nodeType == Xml.PCData && StringTools.trim(n2.nodeValue) == "" && it.next() == null) )
-					return n.nodeValue;
+					return formatInnerData(n.nodeValue);
 			}
 			throw name+" does not only have data";
 		}
 		if( v.nodeType != Xml.PCData && v.nodeType != Xml.CData )
 			throw name+" does not have data";
-		return v.nodeValue;
+		return formatInnerData(v.nodeValue);
+	}
+
+	function formatInnerData(s:String):String {
+		if (s!= null && ignoreWhitespace)
+			s = StringTools.trim(s);
+		return s;
 	}
 
 	function get_innerHTML() {

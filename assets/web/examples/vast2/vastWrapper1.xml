@@ -6,7 +6,7 @@
 
             <AdSystem>wrapper 1</AdSystem>
 
-            <VASTAdTagURI>web/examples/vastWrapper2.xml</VASTAdTagURI>
+            <VASTAdTagURI>web/examples/vast2/vastWrapper2.xml</VASTAdTagURI>
 
             <Impression>http://myTrackingURL/wrapper/impression</Impression>
 
@@ -32,7 +32,21 @@
                     </NonLinearAds>
                 </Creative>
 
-
+                <Creative AdID="wrapper1.creative2.CompanionAds">
+                    <CompanionAds>
+                        <Companion width="1" height="1">
+                            <StaticResource creativeType="image/jpeg">http://wrapper1/creative3/CompanionAds/Companion1.jpg</StaticResource>
+                            <TrackingEvents>
+                                <Tracking event="creativeView">http://myTrackingURL/firstCompanionCreativeView</Tracking>
+                            </TrackingEvents>
+                            <CompanionClickThrough>http://wrapper1/creative3/CompanionAds/Companion1/CompanionClickThrough1</CompanionClickThrough>
+                        </Companion>
+                        <Companion width="2" height="2">
+                            <StaticResource creativeType="image/jpeg">http://wrapper1/creative3/CompanionAds/Companion2.jpg</StaticResource>
+                            <CompanionClickThrough>http://wrapper1/creative3/CompanionAds/Companion2/CompanionClickThrough1</CompanionClickThrough>
+                        </Companion>
+                    </CompanionAds>
+                </Creative>
             </Creatives>
 
         </Wrapper>

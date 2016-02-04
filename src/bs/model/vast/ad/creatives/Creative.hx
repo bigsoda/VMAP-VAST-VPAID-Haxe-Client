@@ -34,7 +34,11 @@ class Creative
 	 * list one of Linear, Companion or NonLinear
 	 */
 	public var details:Array<CreativeDetails>;
-	
+	/**
+	 * collection of AdID from merged wrapper creatives
+	 */
+	public var adIDs:Array<String>;
+
 	public function new() 
 	{
 		

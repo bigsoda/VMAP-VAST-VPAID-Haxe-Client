@@ -35,6 +35,7 @@
 
 		<Creative AdID="inLine.creative2.CompanionAds">
 			<CompanionAds>
+
 				<Companion width="300" height="250">
 					<StaticResource creativeType="image/jpeg">http://demo.tremormedia.com/proddev/vast/Blistex1.jpg</StaticResource>
 					<TrackingEvents>
@@ -42,10 +43,12 @@
 					</TrackingEvents>
 					<CompanionClickThrough>http://www.tremormedia.com</CompanionClickThrough>
 				</Companion>
+
 				<Companion width="728" height="90">
 					<StaticResource creativeType="image/jpeg">http://demo.tremormedia.com/proddev/vast/728x90_banner1.jpg</StaticResource>
 					<CompanionClickThrough>http://www.tremormedia.com</CompanionClickThrough>
 				</Companion>
+
 			</CompanionAds>
 		</Creative>
 

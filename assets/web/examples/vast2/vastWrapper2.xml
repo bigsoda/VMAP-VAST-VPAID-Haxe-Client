@@ -6,7 +6,7 @@
 
             <AdSystem>wrapper 2</AdSystem>
 
-            <VASTAdTagURI>web/examples/vastInLine.xml</VASTAdTagURI>
+            <VASTAdTagURI>web/examples/vast2/vastInLine.xml</VASTAdTagURI>
 
             <Impression>http://myTrackingURL/wrapper/impression</Impression>
 

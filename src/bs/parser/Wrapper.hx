@@ -27,9 +27,7 @@ class Wrapper
 	static var success:Xml->Void;
 	static var error:Dynamic->Void;
 	static var warn:Dynamic->Void;
-	
-	//public static var requestFactory:Dynamic;
-	
+
 	public function new() 
 	{
 		
@@ -120,21 +118,7 @@ class Wrapper
 	static private function mergeVast(wrapper:Xml):Void
 	{
 		var orginalWrapper = Xml.parse("");
-//		var fastWrapper = new Fast(wrapper);
 		var fastWrapper = new Fast(wrapper.firstElement());
-		//Trace.log("mergeVast");
-		//Trace.xmlFromString(wrapper.toString());
-		
-//		if (!fastWrapper.hasNode.VAST ||
-//			!fastWrapper.node.VAST.hasNode.Ad ||
-//			(!fastWrapper.node.VAST.node.Ad.hasNode.Wrapper &&
-//			!fastWrapper.node.VAST.node.Ad.hasNode.InLine)) {
-//			removeWrapperTag(orginalVast);
-//			checkForWrappers(orginalVast);
-//			warn(VastError.CODE_303);
-//			//Trace.log("mergeVast - IF");
-//			return;
-//		}
 
 		if (!fastWrapper.hasNode.Ad || (!fastWrapper.node.Ad.hasNode.Wrapper && !fastWrapper.node.Ad.hasNode.InLine)) {
 			removeWrapperTag();
@@ -188,18 +172,15 @@ class Wrapper
 	
 	static private function addOldTags(ad:Xml, orginalWrapper:Xml):Void 
 	{
-		var adFast = new Fast(ad.firstElement());
-		var wrapperFast = new Fast(orginalWrapper);
-
+		log('__>_____________________________');
 		adImpressions(ad, orginalWrapper);
 		addErrors(ad, orginalWrapper);
-
+		var adFast = new Fast(ad.firstElement());
+		var wrapperFast = new Fast(orginalWrapper);
 		addCreatives(adFast, wrapperFast);
 		addExtensions(adFast, wrapperFast);
-
-//		log('__>_____________________________');
-//		log(adFast.x.toString());
-//		log('__<_____________________________');
+		log(adFast.x.toString());
+		log('__<_____________________________');
 	}
 	
 	static private function adImpressions(ad:Xml, wrapper:Xml)
@@ -226,21 +207,39 @@ class Wrapper
 	}
 
 	static private function addCreatives(adFast:Fast, wrapperFast:Fast) {
-		var adHasCreatives = adFast.hasNode.Creatives;
-		var wrapperHasCreatives = wrapperFast.hasNode.Creatives;
-
-		if (wrapperHasCreatives) {
-			if (!adHasCreatives) {
+		if (wrapperFast.hasNode.Creatives) {
+			if (!adFast.hasNode.Creatives) {
 				adFast.x.addChild(wrapperFast.node.Creatives.x);
 			} else {
 				var wrapperCreativesData = searchCreativesInWrapper(wrapperFast.node.Creatives);
 				var adCreativesFast = adFast.node.Creatives;
 				for (wrapperCreative in wrapperCreativesData) {
-					for (adCreativeFast in adCreativesFast.nodes.Creative)
-						for (adCreativesNamed in adCreativeFast.x.elementsNamed(wrapperCreative.name))
-							mergeWrapperCreatives(adCreativesNamed, wrapperCreative);
-					if (!wrapperCreative.used)
-						addNewWrapperCreatives(adCreativesFast.x, wrapperCreative);
+					if (wrapperCreative.name != 'CompanionAds') {
+						for (adCreativeFast in adCreativesFast.nodes.Creative)
+							for (adCreativesNamed in adCreativeFast.x.elementsNamed(wrapperCreative.name))
+								mergeWrapperCreatives(adCreativesNamed, wrapperCreative);
+						if (!wrapperCreative.used)
+							addNewWrapperCreatives(adCreativesFast.x, wrapperCreative);
+					}
+					else {
+						/**http://www.iab.com/wp-content/uploads/2015/06/VASTv3_0.pdf
+						* page 53 - 2.4.1.7 Wrapper Conflict Management and Precedence
+						*
+						* When Companion creative are included directly in the Wrapper response, conflict may occur.
+						* In a VAST Ad, whether served with multiple Wrappers or in one Inline response, all creative
+						* offered is intended to be part of the same creative concept, and the video player should
+						* attempt to display all creative presented in the response (or in a chain of responses).
+						* However, when conflict occurs, the video player should favor creative offered closest to the
+						* Inline response.
+						* (What 'conflict' means ?)
+						*/
+						//TODO: is this ok "favor creative offered closest to the Inline response"
+						var adHasCompanionAds = false;
+						for (adCreativeFast in adCreativesFast.nodes.Creative)
+							if (!adHasCompanionAds) adHasCompanionAds = adCreativeFast.hasNode.CompanionAds; else break;
+						if (!adHasCompanionAds)
+							addNewWrapperCreatives(adCreativesFast.x, wrapperCreative);
+					}
 				}
 			}
 		}
@@ -248,72 +247,133 @@ class Wrapper
 
 	static private function searchCreativesInWrapper(wrapperCreatives:Fast):Array<CreativeData>
 	{
+//		log(' > - search in wrapper');
 		var creatives:Array<CreativeData> = [];
 		for (creative in wrapperCreatives.nodes.Creative) {
 			var cNode = creative.x.firstElement();
-			var cData:CreativeData = { used:false, name:cNode.nodeName, data:[], attributes:new StringMap<String>() };
+
+			var cData:CreativeData = {
+				used:false,
+				name:cNode.nodeName,
+				data:[],
+				attributes:new StringMap<String>()
+			};
+
 			for (attName in creative.x.attributes())
 				cData.attributes.set(attName, creative.x.get(attName));
-			for (cNodeElement in cNode.elements()) {
-				var cDataNode = { name:cNodeElement.nodeName, data:cNodeElement.elements(), attributes:new StringMap<String>() };
+
+			for (cNodeElement in cNode.elements())
+			{
+				var cDataNode = {
+					name:cNodeElement.nodeName,
+					data:cNodeElement.elements(),
+					attributes:new StringMap<String>()
+				};
+
 				for (attName in cNodeElement.attributes())
 					cDataNode.attributes.set(attName, cNodeElement.get(attName));
-				cData.data.push(cDataNode);
+
+				if (cDataNode.data.hasNext())
+					cData.data.push(cDataNode);
 			}
-			creatives.push(cData);
+			if (cData.data.length > 0)
+				creatives.push(cData);
 		}
 //		log(creatives);
+//		log(' < - search in wrapper');
 		return creatives;
 	}
 
 	static private function mergeWrapperCreatives(adCreatives:Xml, creativeData:CreativeData):Void
 	{
-//		log('merge ' + creativeData.name);
-		//if (creativeData.name != 'CompanionAds') {
-			creativeData.used = true;
-			for (creativeDataNode in creativeData.data) {
-				var elementsFoundedByName = adCreatives.elementsNamed(creativeDataNode.name);
-				if (!elementsFoundedByName.hasNext()) {
-					adCreatives.addChild(Xml.createElement(creativeDataNode.name));
-					elementsFoundedByName = adCreatives.elementsNamed(creativeDataNode.name);
-				}
-				for (elementsNamed in elementsFoundedByName)
-					for (addNode in creativeDataNode.data)
-						elementsNamed.addChild(addNode);
+		creativeData.used = true;
+
+		//TODO: merge AdID s not working properly
+
+		if (creativeData.attributes.exists('AdIDs'))
+		{
+			adCreatives.parent.set('AdIDs',
+				adCreatives.parent.get('AdID')
+				+ Delimiter.array
+				+ creativeData.attributes.get('AdIDs'));
+		}
+		else if (creativeData.attributes.exists('AdID'))
+		{
+			if (adCreatives.parent.exists('AdIDs'))
+				adCreatives.parent.set('AdIDs',
+				adCreatives.parent.get('AdIDs')
+				+ Delimiter.array
+				+ creativeData.attributes.get('AdID'));
+			else
+				adCreatives.parent.set('AdIDs',
+				adCreatives.parent.get('AdID')
+				+ Delimiter.array
+				+ creativeData.attributes.get('AdID'));
+		}
+
+		for (creativeDataNode in creativeData.data) {
+			var elementsFoundedByName = adCreatives.elementsNamed(creativeDataNode.name);
+			if (!elementsFoundedByName.hasNext()) {
+				adCreatives.addChild(Xml.createElement(creativeDataNode.name));
+				elementsFoundedByName = adCreatives.elementsNamed(creativeDataNode.name);
 			}
 
-		//}
+			for (elementsNamed in elementsFoundedByName)
+				for (addNode in creativeDataNode.data)
+					elementsNamed.addChild(addNode);
+		}
 	}
 
 	static private function addNewWrapperCreatives(adCreatives:Xml, creativeData:CreativeData):Void
 	{
-//		log('add new ' + creativeData.name);
+		creativeData.used = true;
 		var newCreativeXml = Xml.createElement('Creative');
+
 		for (attName in creativeData.attributes.keys())
 			newCreativeXml.set(attName, creativeData.attributes.get(attName));
+
 		var newCreativeTypeXml = Xml.createElement(creativeData.name);
-
 		for (creativeDataNode in creativeData.data) {
-
 			var newCreativeNodeXml = Xml.createElement(creativeDataNode.name);
 
 			for (attName in creativeDataNode.attributes.keys())
 				newCreativeNodeXml.set(attName, creativeDataNode.attributes.get(attName));
 
-			for (creativeDataNodeElement in creativeDataNode.data) {
-//				log('add child '+ creativeDataNodeElement.toString());
+			for (creativeDataNodeElement in creativeDataNode.data)
 				newCreativeNodeXml.addChild(creativeDataNodeElement);
-			}
 
 			newCreativeTypeXml.addChild(newCreativeNodeXml);
 		}
 		newCreativeXml.addChild(newCreativeTypeXml);
+
 		adCreatives.addChild(newCreativeXml);
 	}
 
+	static function log(data:Dynamic):Void
+	{
+		#if js
+		js.Browser.console.info(data);
+		#end
+		//trace(data);
+	}
+}
+
+typedef CreativeData = {
+	var used:Bool;
+	var name:String;
+	var attributes:StringMap<String>;
+	var data:Array<CreativeDataNode>;
+}
+
+typedef CreativeDataNode = {
+	var name:String;
+	var attributes:StringMap<String>;
+	var data:Iterator<Xml>;
+}
 
 
-			/*
+
+/*
 				//SEARCH IN WRAPPER
 				var wCreatives:Array<Dynamic> = [];
 				for (wCreative in wrapperFast.node.Creatives.elements) {
@@ -475,7 +535,7 @@ class Wrapper
 //		}
 //	}
 
-	/*
+/*
 	static private function addCreatives(adFast:Fast, wrapperFast:Fast) {
 		var adHasCreatives = ad.firstElement().elementsNamed("Creatives").hasNext();
 		var wrapperHasCreatives = wrapper.elementsNamed("Creatives").hasNext();
@@ -501,7 +561,7 @@ class Wrapper
 					//var f:Fast = new Fast(ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().elementsNamed("Linear").next());
 					//Trace.logColor("fast: " + f.hasNode.TrackingEvents);
 					//Trace.logColor(ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().elementsNamed("Linear").next().elementsNamed("TrackingEvents").hasNext());
-					
+
 					if(ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().elementsNamed("Linear").next().elementsNamed("TrackingEvents").hasNext()) {
 						ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().elementsNamed("Linear").next().elementsNamed("TrackingEvents").next().addChild(tracking);
 					} else {
@@ -512,12 +572,12 @@ class Wrapper
 
 				}
 				//Trace.xmlFromString(ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().toString());
-				
+
 				//Linear Video clicks
 				//for (videoClick in creative.elementsNamed("Linear").next().elementsNamed("VideoClicks").next().elements())	{
 					//ad.firstElement().elementsNamed("Creatives").next().elementsNamed("Creative").next().elementsNamed("Linear").next().elementsNamed("VideoClicks").next().addChild(videoClick);
 				//}
-				
+
 			}
 		}
 	}
@@ -532,24 +592,3 @@ class Wrapper
 		return new XMLHttpRequest();
 	}
 	*/
-
-	static function log(data:Dynamic):Void
-	{
-		#if js
-		js.Browser.console.info(data);
-		#end
-		//trace(data);
-	}
-}
-
-typedef CreativeData = {
-	var used:Bool;
-	var name:String;
-	var attributes:StringMap<String>;
-	var data:Array<CreativeDataNode>;
-}
-typedef CreativeDataNode = {
-	var name:String;
-	var attributes:StringMap<String>;
-	var data:Iterator<Xml>;
-}

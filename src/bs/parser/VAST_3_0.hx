@@ -162,6 +162,9 @@ class VAST_3_0 implements IParser
 				creative.details = cast getNonLinearAds(creativeFast.node.NonLinearAds);
 //				creative.details = cast getNonLinearAds(creativeFast.node.NonLinearAds.nodes.NonLinear);
 
+			if (creativeFast.has.AdIDs)
+				creative.adIDs = creativeFast.att.AdIDs.split(Delimiter.array);
+
 			result.push(creative);
 		}
 		
@@ -239,8 +242,8 @@ class VAST_3_0 implements IParser
 				companion.required = Companion.getRequierType(companionFast.att.required);
 			if (companionFast.hasNode.AdParameters)
 				companion.adParameters = getAdParameters(companionFast.node.AdParameters);
-			if (companionFast.hasNode.trackingEvents)
-				companion.trackingEvents = getTrackingEvents(companionFast.node.trackingEvents.nodes.Tracking);
+			if (companionFast.hasNode.TrackingEvents)
+				companion.trackingEvents = getTrackingEvents(companionFast.node.TrackingEvents.nodes.Tracking);
 			if (companionFast.hasNode.AltText)
 				companion.altText  = companionFast.node.AltText.innerData;
 				
@@ -279,13 +282,6 @@ class VAST_3_0 implements IParser
 		for (linearFast in linears) 
 		{
 			var linear:Linear = new Linear();
-//			linear.duration = linearFast.hasNode.Duration && linearFast.node.Duration.hasNode.innerData
-//				? TimeTool.convertTimeToSeconds(linearFast.node.Duration.innerData)
-//				: 0;
-//			linear.mediaFiles = linearFast.hasNode.MediaFiles && linearFast.node.MediaFiles.hasNode.MediaFile
-//				? getMediaFiles(linearFast.node.MediaFiles.nodes.MediaFile)
-//				: null;
-
 			linear.duration = TimeTool.convertTimeToSeconds(linearFast.node.Duration.innerData);
 			linear.mediaFiles = getMediaFiles(linearFast.node.MediaFiles.nodes.MediaFile);
 
