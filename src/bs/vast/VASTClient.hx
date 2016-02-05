@@ -1,4 +1,5 @@
 package bs.vast;
+import bs.model.VastError.VastErrorEvent;
 import bs.interfaces.IParser;
 import bs.model.vast.ad.Ad;
 import bs.model.HttpError;
@@ -25,7 +26,7 @@ class VASTClient
 		
 	}
 	
-	public static function parseVast(xml:Xml, success:Vast->Void, error:Dynamic->Void):Void
+	public static function parseVast(xml:Xml, success:Vast->Void, error:VastErrorEvent->Null<String>->Void):Void
 	{ 
 		var version:VastVersion = null;
 
@@ -45,7 +46,7 @@ class VASTClient
 		VastParser.parse(xml, parser, success, error);
 	}
 	
-	public static function getVast(url:String, success:Dynamic->Void, error:Dynamic->Void, ?timeout = 6000):Void
+	public static function getVast(url:String, success:Dynamic->Void, error:VastErrorEvent->Null<String>->Void, ?timeout = 6000):Void
 	{
 		var req:XMLHttpRequest = new XMLHttpRequest();
 		req.onerror = error;
@@ -56,9 +57,9 @@ class VASTClient
 			} else {
 				for (err in HttpError.LIST) {
 					if (err.code == req.status)
-						error(err);
+						error(err, req.statusText);
 					else 
-						error({code:req.status , title:"", description:req.statusText });
+						error({code:req.status , description:req.statusText }, null);
 				}
 			}
 			

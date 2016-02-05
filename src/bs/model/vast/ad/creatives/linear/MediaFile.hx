@@ -48,11 +48,11 @@ class MediaFile
 	/**
 	 * identifies whether the media file is meant to scale to larger dimensions
 	 */
-	public var scalable:String;
+	public var scalable:Bool;
 	/**
 	 * a Boolean value that indicates whether aspect ratio for media file dimensions should be maintained when scaled to new dimensions
 	 */
-	public var mantainAspectRatio:Bool;
+	public var maintainAspectRatio:Bool;
 	/**
 	 * the codec used to encode the file which can take values as specified by RFC 4281
 	 */
@@ -60,7 +60,7 @@ class MediaFile
 	/**
 	 * identifies the API needed to execute an interactive media file
 	 */
-	public var apiFreamwork:String;
+	public var apiFramework:String;
 	
 	public function new(delivery:DeliveryType) 
 	{

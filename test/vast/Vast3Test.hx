@@ -1,5 +1,6 @@
 package vast;
 
+import bs.model.vast.ad.creatives.Creative;
 import bs.model.vast.ad.Ad;
 import bs.model.vast.ad.creatives.MIMEType;
 import bs.model.vast.ad.creatives.Tracking.TrackingEvent;
@@ -40,15 +41,21 @@ class Vast3Test extends Tests
 		Assert.areEqual(1, ad.impressions.length);
 		Assert.isNotNull(ad.impressions[0]);
 		Assert.areEqual('FWi_2447226.0', ad.impressions[0].id);
+		//CREATIVES
 		Assert.isNotNull(ad.creatives);
 		Assert.areEqual(1, ad.creatives.length);
+
+		//CREATIVE
 		Assert.isNotNull(ad.creatives[0]);
-		Assert.areEqual('2447226', ad.creatives[0].adID);
-		Assert.isNotNull(ad.creatives[0].details);
-		Assert.areEqual(1, ad.creatives[0].details.length);
-		Assert.isNotNull(ad.creatives[0].details[0]);
-		Assert.isType(ad.creatives[0].details[0], Linear);
-		var linear:Linear = cast ad.creatives[0].details[0];
+		var creative:Creative = ad.creatives[0];
+		Assert.areEqual('2447226', creative.adID);
+		Assert.isNull(creative.adIDs);
+		Assert.isNotNull(creative.details);
+		Assert.areEqual(1, creative.details.length);
+
+		Assert.isNotNull(creative.details[0]);
+		Assert.isType(creative.details[0], Linear);
+		var linear:Linear = cast creative.details[0];
 		Assert.isNotNull(linear.duration);
 		Assert.areEqual(15, linear.duration);
 		Assert.isNotNull(linear.trackingEvents);
@@ -91,13 +98,17 @@ class Vast3Test extends Tests
 		Assert.areEqual('FWi_2447227.0', ad.impressions[0].id);
 		Assert.isNotNull(ad.creatives);
 		Assert.areEqual(1, ad.creatives.length);
+
 		Assert.isNotNull(ad.creatives[0]);
-		Assert.areEqual('2447227', ad.creatives[0].adID);
-		Assert.isNotNull(ad.creatives[0].details);
-		Assert.areEqual(1, ad.creatives[0].details.length);
-		Assert.isNotNull(ad.creatives[0].details[0]);
-		Assert.isType(ad.creatives[0].details[0], Linear);
-		var linear:Linear = cast ad.creatives[0].details[0];
+		creative = ad.creatives[0];
+		Assert.areEqual('2447227', creative.adID);
+		Assert.isNull(creative.adIDs);
+		Assert.isNotNull(creative.details);
+		Assert.areEqual(1, creative.details.length);
+
+		Assert.isNotNull(creative.details[0]);
+		Assert.isType(creative.details[0], Linear);
+		linear = cast creative.details[0];
 		Assert.isNotNull(linear.duration);
 		Assert.areEqual(31, linear.duration);
 		Assert.isNotNull(linear.trackingEvents);
@@ -110,11 +121,13 @@ class Vast3Test extends Tests
 		Assert.areEqual(TrackingEvent.MIDPOINT, linear.trackingEvents[2].event);
 		Assert.isNotNull(linear.trackingEvents[3]);
 		Assert.areEqual(TrackingEvent.THIRD_QUARTILE, linear.trackingEvents[3].event);
+
 		Assert.isNotNull(linear.videoClicks);
 		Assert.areEqual(1, linear.videoClicks.length);
 		Assert.isNotNull(linear.videoClicks[0]);
 		Assert.areEqual(ClickType.CLICK_TRACKING, linear.videoClicks[0].type);
 		Assert.areEqual('FWc_2447227.0', linear.videoClicks[0].id);
+
 		Assert.isNotNull(linear.mediaFiles);
 		Assert.areEqual(1, linear.mediaFiles.length);
 		Assert.isNotNull(linear.mediaFiles[0]);
@@ -140,13 +153,17 @@ class Vast3Test extends Tests
 		Assert.areEqual('FWi_2447228.0', ad.impressions[0].id);
 		Assert.isNotNull(ad.creatives);
 		Assert.areEqual(1, ad.creatives.length);
+
 		Assert.isNotNull(ad.creatives[0]);
-		Assert.areEqual('2447228', ad.creatives[0].adID);
-		Assert.isNotNull(ad.creatives[0].details);
-		Assert.areEqual(1, ad.creatives[0].details.length);
-		Assert.isNotNull(ad.creatives[0].details[0]);
-		Assert.isType(ad.creatives[0].details[0], Linear);
-		var linear:Linear = cast ad.creatives[0].details[0];
+		creative = ad.creatives[0];
+		Assert.areEqual('2447228', creative.adID);
+		Assert.isNull(creative.adIDs);
+		Assert.isNotNull(creative.details);
+		Assert.areEqual(1, creative.details.length);
+		Assert.isNotNull(creative.details[0]);
+
+		Assert.isType(creative.details[0], Linear);
+		linear = cast creative.details[0];
 		Assert.isNotNull(linear.duration);
 		Assert.areEqual(31, linear.duration);
 		Assert.isNotNull(linear.trackingEvents);

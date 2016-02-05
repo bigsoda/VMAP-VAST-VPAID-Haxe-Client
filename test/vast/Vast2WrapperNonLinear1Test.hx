@@ -120,11 +120,12 @@ class Vast2WrapperNonLinear1Test extends Tests
 		Assert.isNotNull(creative);
 		Assert.isNotNull(creative.adID);
 		Assert.areEqual('602678-Companion', creative.adID);
+
 		Assert.isNotNull(creative.details);
 		Assert.areEqual(2, creative.details.length);
+
 		Assert.isNotNull(creative.details[0]);
 		Assert.isType(creative.details[0], Companion);
-
 		var companion:Companion = cast creative.details[0];
 		Assert.isNotNull(companion);
 		Assert.areEqual(300, companion.width);
@@ -140,6 +141,7 @@ class Vast2WrapperNonLinear1Test extends Tests
 		Assert.isNotNull(companion.clicks[0]);
 		Assert.areEqual(ClickType.COMPANION_CLICK_THROUGH, companion.clicks[0].type);
 		Assert.areEqual("http://www.tremormedia.com", companion.clicks[0].url);
+
 		Assert.isType(creative.details[1], Companion);
 		companion = cast creative.details[1];
 		Assert.isNotNull(companion);

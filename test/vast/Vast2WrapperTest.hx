@@ -1,5 +1,6 @@
 package vast;
 
+import bs.model.vast.ad.creatives.Creative;
 import bs.model.vast.ad.Ad;
 import bs.model.vast.ad.creatives.MIMEType;
 import bs.model.vast.ad.creatives.linear.MediaFile.DeliveryType;
@@ -28,6 +29,10 @@ class Vast2WrapperTest extends Tests
 		Assert.areEqual('a115440', ad.id);
 		Assert.isNotNull(ad.ids);
 		Assert.areEqual(3, ad.ids.length);
+		Assert.areEqual('2306', ad.ids[0]);
+		Assert.areEqual('e529f14a-6d86-4905-896f-1410901d5dad', ad.ids[1]);
+		Assert.areEqual('a115440', ad.ids[2]);
+
 		Assert.isNotNull(ad.system);
 		Assert.areEqual('Adap.tv', ad.system.name);
 		Assert.areEqual('1.0', ad.system.version);
@@ -40,13 +45,34 @@ class Vast2WrapperTest extends Tests
 		Assert.areEqual(13, ad.impressions.length);
 		Assert.isNotNull(ad.creatives);
 		Assert.areEqual(1, ad.creatives.length);
+
 		Assert.isNotNull(ad.creatives[0]);
-		Assert.isNull(ad.creatives[0].adID);
-		Assert.isNotNull(ad.creatives[0].details);
-		Assert.areEqual(1, ad.creatives[0].details.length);
-		Assert.isNotNull(ad.creatives[0].details[0]);
-		Assert.isType(ad.creatives[0].details[0], Linear);
-		var linear:Linear = cast ad.creatives[0].details[0];
+		var creative:Creative = ad.creatives[0];
+
+		//TODO: 'id' not copied from wrapper
+		//Assert.isNull(creative.id);
+		//Assert.areEqual('video',creative.id);
+
+		//TODO: 'AdID' not copied from wrapper
+		//Assert.isNull(creative.adID);
+		//Assert.areEqual('2306', creative.adID);
+
+		Assert.isNotNull(creative.adIDs);
+		Assert.areEqual(3, creative.adIDs.length);
+
+		//TODO: 'undefined' ??
+		Assert.areEqual('undefined', creative.adIDs[0]);
+		Assert.areEqual('undefined', creative.adIDs[1]);
+		Assert.areEqual('2306', creative.adIDs[2]);
+
+		Assert.isNotNull(creative.adIDs);
+
+		Assert.isNotNull(creative.details);
+		Assert.areEqual(1, creative.details.length);
+
+		Assert.isNotNull(creative.details[0]);
+		Assert.isType(creative.details[0], Linear);
+		var linear:Linear = cast creative.details[0];
 		Assert.isNotNull(linear.duration);
 		Assert.areEqual(15, linear.duration);
 		Assert.isNotNull(linear.trackingEvents);

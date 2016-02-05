@@ -28,6 +28,12 @@ class Vast2WrapperNonLinear2Test extends Tests
 		var ad:Ad = data.ads[0];
 		Assert.isNotNull(ad.id);
 		Assert.areEqual('602678', ad.id);
+
+		Assert.isNotNull(ad.ids);
+		Assert.areEqual(2, ad.ids.length);
+		Assert.areEqual('602867', ad.ids[0]);
+		Assert.areEqual('602678', ad.ids[1]);
+
 		Assert.isNotNull(ad.system);
 		Assert.areEqual('Acudeo Compatible', ad.system.name);
 		Assert.isNotNull(ad.title);
@@ -41,9 +47,12 @@ class Vast2WrapperNonLinear2Test extends Tests
 		Assert.areEqual(2, ad.impressions.length);
 		Assert.isNotNull(ad.creatives);
 		Assert.areEqual(2, ad.creatives.length);
+
 		var creative:Creative = ad.creatives[0];
 		Assert.isNotNull(creative);
 		Assert.isNotNull(creative.adID);
+		Assert.isNull(creative.adIDs);
+
 		Assert.areEqual('602678-NonLinear', creative.adID);
 		Assert.isType(creative.details, NonLinearAds);
 		var nonlinearAds:NonLinearAds = cast creative.details;
@@ -90,9 +99,11 @@ class Vast2WrapperNonLinear2Test extends Tests
 		Assert.isNotNull(nonlinear.clicks[0]);
 		Assert.areEqual(ClickType.NON_LINEAR_CLICK_THROUGH, nonlinear.clicks[0].type);
 		Assert.areEqual("http://demo.tremormedia.com/qa/qa_page/index.html", nonlinear.clicks[0].url);
+
 		creative = ad.creatives[1];
 		Assert.isNotNull(creative);
 		Assert.isNotNull(creative.adID);
+		Assert.isNull(creative.adIDs);
 		Assert.areEqual('602867-Companion', creative.adID);
 		Assert.areEqual(2, creative.details.length);
 		Assert.isType(creative.details[0], Companion);
@@ -115,6 +126,7 @@ class Vast2WrapperNonLinear2Test extends Tests
 		Assert.areEqual(1, companion.trackingEvents.length);
 		Assert.areEqual(TrackingEvent.CREATIVE_VIEW, companion.trackingEvents[0].event);
 		Assert.areEqual("http://myTrackingURL/wrapper/firstCompanionCreativeView", companion.trackingEvents[0].url);
+
 		Assert.isType(creative.details[1], Companion);
 		companion = cast creative.details[1];
 		Assert.isNotNull(companion);

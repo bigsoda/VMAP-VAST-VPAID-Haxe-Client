@@ -1,4 +1,5 @@
 package bs.parser;
+import bs.model.VastError.VastErrorEvent;
 import haxe.xml.Fast;
 import bs.parser.VAST_3_0;
 import bs.interfaces.IParser;
@@ -18,7 +19,7 @@ class VAST_1_0 implements IParser
 	{
 	}
 	
-	public function parse(xml:Xml, onError:Dynamic->Void):Vast
+	public function parse(xml:Xml, onError:VastErrorEvent->Null<String>->Void):Vast
 	{
 		trace("PARSE FROM VAST_2_0 Parser");
 		return new Vast();

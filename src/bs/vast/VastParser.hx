@@ -1,4 +1,5 @@
 package bs.vast;
+import bs.model.VastError.VastErrorEvent;
 import bs.interfaces.IParser;
 import bs.model.vast.ad.Ad;
 import bs.model.vast.Vast;
@@ -44,7 +45,7 @@ class VastParser
 	 * @param	vast VAST Xml
 	 * @param	parser class of VAST Version - 1.0, 2.0, 3.0, must implement parser interface.
 	 */
-	public static function parse(vast:Xml, parserType:Class<IParser>, success:Vast->Void, error:Dynamic->Void):Void
+	public static function parse(vast:Xml, parserType:Class<IParser>, success:Vast->Void, error:VastErrorEvent->Null<String>->Void):Void
 	{
 		var parser:IParser = cast Type.createInstance(parserType, []);
 		Wrapper.check(vast, function (data:Xml) { success(parser.parse(data, error)); }, error, onWrapperWarn);

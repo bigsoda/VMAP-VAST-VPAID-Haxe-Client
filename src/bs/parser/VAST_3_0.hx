@@ -32,14 +32,14 @@ import bs.tools.TimeTool;
 class VAST_3_0 implements IParser
 {
 	var vast:Fast;
-	var error:Dynamic->Void;
+	var error:VastErrorEvent->Null<String>->Void;
 
 	public function new() 
 	{
 		
 	}
 	
-	public function parse(vastXML:Xml, onError:Dynamic->Void):Vast
+	public function parse(vastXML:Xml, onError:VastErrorEvent->Null<String>->Void):Vast
 	{
 		error = onError;
 		var result:Vast = new Vast();
@@ -180,6 +180,10 @@ class VAST_3_0 implements IParser
 			var nonLinear = new NonLinear();
 			//requierd
 			nonLinear.resources = getResources(nonLinearFast);
+
+			if (nonLinear.resources.length == 0)
+				error(VastError.CODE_502, "NonLinear dosn't contain any resource");
+
 			nonLinear.width = Std.parseFloat(nonLinearFast.att.width);
 			nonLinear.height = Std.parseFloat(nonLinearFast.att.height);
 			nonLinear.clicks = getClicks(nonLinearFast);
@@ -204,6 +208,9 @@ class VAST_3_0 implements IParser
 
 			result.nonLinear.push(nonLinear);
 		}
+
+		if (result.nonLinear.length == 0)
+			error(VastError.CODE_500, "NonLinearAds dosn't contain any NonLinear's");
 
 		if (nonLinearAds.hasNode.TrackingEvents)
 			result.trackingEvents = getTrackingEvents(nonLinearAds.node.TrackingEvents.nodes.Tracking);
@@ -316,7 +323,7 @@ class VAST_3_0 implements IParser
 			
 			//optional
 			if(iconFast.has.apiFramework)
-				icon.apiFreamwork = iconFast.att.apiFramework;
+				icon.apiFramework = iconFast.att.apiFramework;
 			if(iconFast.has.offset)
 				icon.offset = TimeTool.convertTimeToSeconds(iconFast.att.offset);
 			if(iconFast.has.duration)
@@ -378,13 +385,9 @@ class VAST_3_0 implements IParser
 		var result = new Array<MediaFile>();
 		for (mediaFileFast in mediaFiles) 
 		{
-
 			if (!mediaFileFast.has.delivery) {
-				trace('Media File requied "delivery" attribute is missing');
-				error(VastError.CODE_400);
-				//break;
+				error(VastError.CODE_400, 'Media File requied "delivery" attribute is missing');
 			}
-
 			var mediaFile = new MediaFile(MediaFile.getDeliveryType(mediaFileFast.att.delivery));
 			//requierd
 			mediaFile.url = mediaFileFast.innerData;
@@ -394,7 +397,7 @@ class VAST_3_0 implements IParser
 			
 			//optional
 			if (mediaFileFast.has.apiFramework)
-				mediaFile.apiFreamwork = mediaFileFast.att.apiFramework;
+				mediaFile.apiFramework = mediaFileFast.att.apiFramework;
 			if (mediaFileFast.has.id)
 				mediaFile.id = mediaFileFast.att.id;
 			if (mediaFileFast.has.bitrate)
@@ -404,9 +407,9 @@ class VAST_3_0 implements IParser
 			if (mediaFileFast.has.maxBitrate)
 				mediaFile.maxBitrate = Std.parseFloat(mediaFileFast.att.maxBitrate);
 			if (mediaFileFast.has.scalable)
-				mediaFile.scalable = mediaFileFast.att.scalable;
-			if (mediaFileFast.has.mantainAspectRatio)
-				mediaFile.mantainAspectRatio = (mediaFileFast.att.mantainAspectRatio == "true");
+				mediaFile.scalable = (mediaFileFast.att.scalable == "true");
+			if (mediaFileFast.has.maintainAspectRatio)
+				mediaFile.maintainAspectRatio = (mediaFileFast.att.maintainAspectRatio == "true");
 			if (mediaFileFast.has.codec)
 				mediaFile.codec = mediaFileFast.att.codec;
 			result.push(mediaFile);

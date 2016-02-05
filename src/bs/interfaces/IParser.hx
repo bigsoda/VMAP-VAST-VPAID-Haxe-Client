@@ -1,11 +1,11 @@
 package bs.interfaces;
-import bs.model.vast.ad.Ad;
+
+import bs.model.VastError.VastErrorEvent;
 import bs.model.vast.Vast;
-import haxe.Constraints.Function;
 /**
  * @author Piotr Skolysz <piotr.skolysz@bigsoda.pl>
  */
 interface IParser 
 {
-	function parse(xml:Xml, onError:Dynamic->Void):Vast;
+	function parse(xml:Xml, onError:VastErrorEvent->Null<String>->Void):Vast;
 }

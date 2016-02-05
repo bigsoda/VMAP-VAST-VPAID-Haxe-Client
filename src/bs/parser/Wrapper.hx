@@ -25,7 +25,7 @@ class Wrapper
 	static var currentWrapperChain:Map<String,Int> = new Map<String,Int>();
 	static var orginalVast:Xml;
 	static var success:Xml->Void;
-	static var error:Dynamic->Void;
+	static var error:VastErrorEvent->Null<String>->Void;
 	static var warn:Dynamic->Void;
 
 	public function new() 
@@ -37,7 +37,7 @@ class Wrapper
 	 * @param vast VAST Xml with or without wrappers
 	 * @return VAST Xml without wrappers
 	 */
-	public static function check(vast:Xml, onSuccess:Xml->Void, onError:Dynamic->Void, onWarn:Dynamic->Void):Void 
+	public static function check(vast:Xml, onSuccess:Xml->Void, onError:VastErrorEvent->Null<String>->Void, onWarn:Dynamic->Void):Void
 	{
 		orginalVast = vast;
 		success = onSuccess;

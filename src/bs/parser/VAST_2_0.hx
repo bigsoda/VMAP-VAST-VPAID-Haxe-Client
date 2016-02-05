@@ -1,4 +1,5 @@
 package bs.parser;
+import bs.model.VastError.VastErrorEvent;
 import bs.interfaces.IParser;
 import bs.model.vast.ad.Ad;
 import bs.model.vast.Vast;
@@ -17,7 +18,7 @@ class VAST_2_0 implements IParser
 		
 	}
 	
-	public function parse(xml:Xml, onError:Dynamic->Void):Vast
+	public function parse(xml:Xml, onError:VastErrorEvent->Null<String>->Void):Vast
 	{
 		trace("PARSE FROM VAST_2_0 Parser");
 		return new Vast();
