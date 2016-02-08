@@ -72,3 +72,19 @@ class Ad
 	}
 	
 }
+
+//typedef AdTestType = {
+//	var id:String;
+//	var system:String;
+//	var title:String;
+//	var impressions:Array<Dynamic>;
+//	var creatives:Array<Dynamic>;
+//	@:optional var ids:Array<String>;
+//	@:optional var description:String;
+//	@:optional var errors:Array<String;
+//	@:optional var advertiser:String;
+//	@:optional var survey:String;
+//	@:optional var sequence:Int;
+//	@:optional var extensions:Array<String>;
+//	@:optional var pricing:Array<Dynamic>;
+//}

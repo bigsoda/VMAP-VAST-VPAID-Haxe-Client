@@ -1,15 +1,17 @@
 package vast;
 
-import bs.model.vast.ad.creatives.Resource.ResourceType;
-import bs.model.vast.ad.creatives.MIMEType;
-import bs.model.vast.ad.creatives.linear.MediaFile;
-import bs.model.vast.ad.creatives.linear.MediaFile.DeliveryType;
-import bs.model.vast.ad.creatives.Click.ClickType;
-import bs.model.vast.ad.creatives.CreativeDetails;
-import bs.model.vast.ad.creatives.Tracking.TrackingEvent;
-import bs.model.vast.ad.creatives.Creative;
-import bs.model.vast.ad.Ad;
-import massive.munit.Assert;
+import bs.model.VastTypes.Vast;
+import bs.model.VastTypes.RequiredType;
+import bs.model.VastTypes.ResourceType;
+import bs.model.VastTypes.ClickType;
+import bs.model.VastTypes.Tracking;
+import bs.model.VastTypes.TrackingEvent;
+import bs.model.VastTypes.MIMEType;
+import bs.model.VastTypes.DeliveryType;
+import bs.model.VastTypes.VastVersion;
+import bs.model.VastTypes.CreativeDetailLinear;
+import bs.model.VastTypes.CreativeDetailCompanion;
+import bs.model.VastTypes.CreativeDetailNonLinearAds;
 import massive.munit.async.AsyncFactory;
 
 class Vast2WrapperMergeTest extends Tests
@@ -23,67 +25,66 @@ class Vast2WrapperMergeTest extends Tests
 
 	override public function testStart():Void {
 		super.testStart();
-		/////////////////////////////////
-		Assert.areEqual(1, data.ads.length);
+/////////////////////////////////
+		var linear:CreativeDetailLinear = {
+			duration:30,
+			mediaFiles:[{
+				delivery:DeliveryType.PROGRESSIVE, type:MIMEType.VIDEO_X_FLV,
+				width:400, height:300, url:'http://cdnp.tremormedia.com/video/acudeo/Carrot_400x300_500kb.flv',
+				scalable:true, minBitrate:null, maxBitrate:null, maintainAspectRatio:true, id:null, codec:null,
+				bitrate:500, apiFramework:null
+			}],
+			trackingEvents:[
+				{event:TrackingEvent.CREATIVE_VIEW, url:'http://inline/Linear/tracking/creative1/1'},
+				{event:TrackingEvent.CREATIVE_VIEW, url:'http:///wrapper2/Linear/tracking/creative1/1'},
+				{event:TrackingEvent.CREATIVE_VIEW, url:'http://wrapper1/Linear/tracking/creative1/1'}
+			],
+			videoClicks:[
+				{ id:null, type:ClickType.CLICK_THROUGH, url:'http://inline/Linear/videoClick/creative1/clickThrough'},
+				{ id:null, type:ClickType.CLICK_THROUGH, url:'http://wrapper1/Linear/videoClick/creative1/clickThrough'},
+				{ id:null, type:ClickType.CLICK_TRACKING, url:'http://inline/Linear/videoClick/creative1/clickTracking'},
+				{ id:null, type:ClickType.CLICK_TRACKING, url:'http://wrapper1/Linear/videoClick/creative1/clickTracking'}
+			],
+			skipoffset:null, icons:null, adParameters:null
+		};
 
-		var impressions = ['http://myTrackingURL/impression','http://myTrackingURL/wrapper/impression','http://myTrackingURL/wrapper/impression'];
-		var ids = ['wrapper1', 'wrapper2','inLine'];
-		var errors = ['http://myErrorURL/error'];
-		checkAd(data.ads[0], 'inLine', 'VAST TEST', 'VAST InLine', impressions, 3, ids, 'VAST TEST', errors);
+		var nonLinearAds:CreativeDetailNonLinearAds = {
+			trackingEvents:[{ event:TrackingEvent.CREATIVE_VIEW, url:'http://NonLinearAds/tracking/wrapper1/creative2/1' }],
+			//TODO: warn/error on empty nonLinear ??
+			nonLinear:[]
+		};
 
-		//CREATIVE 1/3 - LINEAR
-		var adIDs:Array<String> = ['inLine.creative1.Linear','wrapper2.creative1.Linear','wrapper1.creative1.Linear'];
-		checkCreative(data.ads[0].creatives[0], 1, 'inLine.creative1.Linear' ,adIDs);
+		var companionAds:Array<CreativeDetailCompanion> = [{ width:300,height:250,
+			id:null, adParameters:null, altText:null, assetWidth:null,assetHeight:null,expandedWidth:null,expandedHeight:null,apiFramework:null,adSlotID:null,required:null,
+			resources:[{type:ResourceType.STATIC_RESOURCE, creativeType:MIMEType.IMAGE_JPEG, url:"http://demo.tremormedia.com/proddev/vast/Blistex1.jpg"}],
+			clicks:[{id:null, type:ClickType.COMPANION_CLICK_THROUGH, url:'http://www.tremormedia.com'}],
+			trackingEvents:[{event:TrackingEvent.CREATIVE_VIEW, url:'http://myTrackingURL/firstCompanionCreativeView'}]
+		},{ width:728,height:90,
+			id:null, trackingEvents:null, adParameters:null, altText:null, assetWidth:null, assetHeight:null, expandedWidth:null, expandedHeight:null, apiFramework:null, adSlotID:null, required:null,
+			resources:[{ type:ResourceType.STATIC_RESOURCE, creativeType:MIMEType.IMAGE_JPEG, url:"http://demo.tremormedia.com/proddev/vast/728x90_banner1.jpg"}],
+			clicks:[{id:null, type:ClickType.COMPANION_CLICK_THROUGH, url:'http://www.tremormedia.com'}]
+		}];
 
-		var trackingEventsMap = [
-			{e:TrackingEvent.CREATIVE_VIEW,u:'http://inline/Linear/tracking/creative1/1'},
-			{e:TrackingEvent.CREATIVE_VIEW,u:'http:///wrapper2/Linear/tracking/creative1/1'},
-			{e:TrackingEvent.CREATIVE_VIEW,u:'http://wrapper1/Linear/tracking/creative1/1'}
-		];
-		var videoClicksMap = [
-			{t:ClickType.CLICK_THROUGH,u:'http://inline/Linear/videoClick/creative1/clickThrough'},
-			{t:ClickType.CLICK_THROUGH,u:'http://wrapper1/Linear/videoClick/creative1/clickThrough'},
-			{t:ClickType.CLICK_TRACKING,u:'http://inline/Linear/videoClick/creative1/clickTracking'},
-			{t:ClickType.CLICK_TRACKING,u:'http://wrapper1/Linear/videoClick/creative1/clickTracking'}
-		];
-		var mediaFileMap:MediaFile = new MediaFile(DeliveryType.PROGRESSIVE);
-			mediaFileMap.type = MIMEType.VIDEO_X_FLV;
-			mediaFileMap.bitrate = 500;
-			mediaFileMap.width = 400;
-			mediaFileMap.height = 300;
-			mediaFileMap.scalable = true;
-			mediaFileMap.maintainAspectRatio = true;
-			mediaFileMap.url = 'http://cdnp.tremormedia.com/video/acudeo/Carrot_400x300_500kb.flv';
-		super.checkLinear(data.ads[0].creatives[0].details[0], 30, mediaFileMap, trackingEventsMap, videoClicksMap);
+		var vast:Vast = { version:VastVersion.v_2_0,
+			ads:[{ id:'inLine', system:{name:'VAST TEST', version:null}, title:'VAST InLine',
+				impressions:[
+					{id:null, url:'http://myTrackingURL/impression'},
+					{id:null, url:'http://myTrackingURL/wrapper/impression'},
+					{id:null, url:'http://myTrackingURL/wrapper/impression'}
+				],
+				creatives:[
+					{adID:'inLine.creative1.Linear', adIDs:['inLine.creative1.Linear','wrapper2.creative1.Linear','wrapper1.creative1.Linear'], details:[linear], sequence:null, id:null, creativeExtensions:null, apiFramework:null },
+					{adID:'inLine.creative2.CompanionAds', adIDs:null, details:companionAds, sequence:null, id:null, creativeExtensions:null, apiFramework:null },
+					{adID:'wrapper1.creative2.NonLinearAds', adIDs:null, details:nonLinearAds, sequence:null, id:null, creativeExtensions:null, apiFramework:null}
+				],
+				ids:['wrapper1', 'wrapper2','inLine'], description:'VAST TEST',
+				errors:[{url:'http://myErrorURL/error'}],
+				advertiser:null, survey:null, sequence:null, extensions:null, pricing:null }],
+			error:null
+		};
 
-		//CREATIVE 2/3 - CompanionAds
-		super.checkCreative(data.ads[0].creatives[1], 2, 'inLine.creative2.CompanionAds');
-		var resourcesMap = [
-			{t:ResourceType.STATIC_RESOURCE, c:MIMEType.IMAGE_JPEG, u:'http://demo.tremormedia.com/proddev/vast/Blistex1.jpg'}
-		];
-		trackingEventsMap = [
-			{e:TrackingEvent.CREATIVE_VIEW,u:'http://myTrackingURL/firstCompanionCreativeView'}
-		];
-		videoClicksMap = [
-			{t:ClickType.COMPANION_CLICK_THROUGH,u:'http://www.tremormedia.com'}
-		];
-		super.checkCompanion(data.ads[0].creatives[1].details[0], 300, 250, resourcesMap, trackingEventsMap, videoClicksMap);
+		checkMap('vast', vast, data);
 
-		var resourcesMap = [
-			{t:ResourceType.STATIC_RESOURCE, c:MIMEType.IMAGE_JPEG, u:'http://demo.tremormedia.com/proddev/vast/728x90_banner1.jpg'}
-		];
-		videoClicksMap = [
-			{t:ClickType.COMPANION_CLICK_THROUGH,u:'http://www.tremormedia.com'}
-		];
-		super.checkCompanion(data.ads[0].creatives[1].details[1], 728, 90, resourcesMap, null, videoClicksMap);
-
-		//CREATIVE 2/3 - NonLinearAds
-		super.checkCreative(data.ads[0].creatives[2], 0, 'wrapper1.creative2.NonLinearAds');
-		var nonLinearMap = [];
-		var trackingEventsMap = [
-			{e:TrackingEvent.CREATIVE_VIEW,u:'http://NonLinearAds/tracking/wrapper1/creative2/1'}
-		];
-		super.checkNonLinearAds(data.ads[0].creatives[2].details, nonLinearMap, trackingEventsMap);
 	}
 
 }

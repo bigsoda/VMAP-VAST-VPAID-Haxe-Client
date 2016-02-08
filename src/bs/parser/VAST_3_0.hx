@@ -182,7 +182,7 @@ class VAST_3_0 implements IParser
 			nonLinear.resources = getResources(nonLinearFast);
 
 			if (nonLinear.resources.length == 0)
-				error(VastError.CODE_502, "NonLinear dosn't contain any resource");
+				error(VastError.CODE_502, "NonLinear don't have any resource length=0");
 
 			nonLinear.width = Std.parseFloat(nonLinearFast.att.width);
 			nonLinear.height = Std.parseFloat(nonLinearFast.att.height);

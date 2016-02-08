@@ -54,6 +54,6 @@ class VastParser
 	static function onWrapperWarn(data:Dynamic):Void 
 	{
 		//TODO warn only in console.log
-		#if js js.Browser.console.log('VastParser.onWrapperWarn', data); #end
+//		#if js js.Browser.console.log('VastParser.onWrapperWarn', data); #end
 	}
 }

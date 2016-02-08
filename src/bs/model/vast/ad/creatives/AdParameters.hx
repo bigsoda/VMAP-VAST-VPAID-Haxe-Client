@@ -11,7 +11,8 @@ class AdParameters
 	 */
 	public var xmlEncoded:Bool;
 	public var data:String;
-	
+	public var id:String;
+
 	public function new() 
 	{
 		

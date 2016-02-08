@@ -346,9 +346,9 @@ class Wrapper
 
 	static function log(data:Dynamic):Void
 	{
-		#if js
-		js.Browser.console.info(data);
-		#end
+//		#if js
+//		js.Browser.console.info(data);
+//		#end
 		//trace(data);
 	}
 }

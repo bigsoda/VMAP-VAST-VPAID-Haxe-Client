@@ -2,9 +2,9 @@
 <project name="bs-vmap-vast-munit" default="munit">
 
     <target name="munit">
-        <delete includeEmptyDirs="true">
-            <fileset dir="bin" includes="**/*" defaultexcludes="no"/>
-        </delete>
+        <!--<delete includeEmptyDirs="true">-->
+            <!--<fileset dir="bin" includes="**/*" defaultexcludes="no"/>-->
+        <!--</delete>-->
         <exec executable="haxelib" failonerror="true">
             <arg line="run"/>
             <arg line="munit"/>
@@ -23,12 +23,20 @@
             <arg line="-coverage"/>
 
             <!-- execute specific test -->
-            <!--<arg line="-filter vast.Vast3Test"/>-->
+            <arg line="-filter vast.Vast3Test"/>
             <!--<arg line="-filter vast.Vast2WrapperTest"/>-->
             <!--<arg line="-filter vast.Vast2WrapperNonLinear2Test"/>-->
             <!--<arg line="-filter vast.Vast2WrapperNonLinear1Test"/>-->
-
-            <arg line="-filter vast.Vast2WrapperMergeTest"/>
+            <!--<arg line="-filter vast.Vast2WrapperMergeTest"/>-->
+            <!--<arg line="-filter vast.Vast2WrapperLinear2Test"/>-->
+            <!--<arg line="-filter vast.Vast2WrapperLinear1Test"/>-->
+            <!--<arg line="-filter vast.Vast2RegularLinearTest"/>-->
+            <!--<arg line="-filter vast.Vast2NonLinearTest"/>-->
+            <!--<arg line="-filter vast.Vast2InlineNonLinearTest"/>-->
+            <!--<arg line="-filter vast.Vast2InlineLinearTest"/>-->
+            <!--TODO-->
+            <!--<arg line="-filter vast.InvalidVast2WithWhitespacesTest"/>-->
+            <!--<arg line="-filter vast.InvalidVast2VPAIDLinearTest"/>-->
 
             <!--<arg line="-debug"/>-->
         </exec>

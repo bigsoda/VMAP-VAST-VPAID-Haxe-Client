@@ -1,14 +1,16 @@
 package vast;
 
-import bs.model.vast.ad.creatives.companion.Companion;
-import bs.model.vast.ad.creatives.Tracking.TrackingEvent;
-import bs.model.vast.ad.creatives.Click.ClickType;
-import bs.model.vast.ad.creatives.MIMEType;
-import bs.model.vast.ad.creatives.Resource.ResourceType;
-import bs.model.vast.ad.creatives.nonlinears.NonLinearAds;
-import bs.model.vast.ad.creatives.Creative;
-import bs.model.vast.ad.Ad;
-import massive.munit.Assert;
+import bs.model.VastTypes.Vast;
+import bs.model.VastTypes.RequiredType;
+import bs.model.VastTypes.ResourceType;
+import bs.model.VastTypes.ClickType;
+import bs.model.VastTypes.Tracking;
+import bs.model.VastTypes.TrackingEvent;
+import bs.model.VastTypes.MIMEType;
+import bs.model.VastTypes.DeliveryType;
+import bs.model.VastTypes.CreativeDetailNonLinearAds;
+import bs.model.VastTypes.CreativeDetailCompanion;
+import bs.model.VastTypes.VastVersion;
 import massive.munit.async.AsyncFactory;
 
 class Vast2WrapperNonLinear1Test extends Tests
@@ -21,148 +23,60 @@ class Vast2WrapperNonLinear1Test extends Tests
 	}
 	override public function testStart():Void {
 		super.testStart();
-		/////////////////////////////////
-		Assert.areEqual(1, data.ads.length);
-		var ad:Ad = data.ads[0];
-		Assert.isNotNull(ad.id);
-		Assert.areEqual('602678', ad.id);
-
-		Assert.isNotNull(ad.ids);
-		Assert.areEqual(2, ad.ids.length);
-		Assert.areEqual('602867', ad.ids[0]);
-		Assert.areEqual('602678', ad.ids[1]);
-
-		Assert.isNotNull(ad.system);
-		Assert.areEqual('Acudeo Compatible', ad.system.name);
-		Assert.isNotNull(ad.title);
-		Assert.areEqual('NonLinear Test Campaign 1', ad.title);
-		Assert.isNotNull(ad.description);
-		Assert.areEqual('NonLinear Test Campaign 1', ad.description);
-		Assert.isNotNull(ad.survey);
-		Assert.areEqual('http://mySurveyURL/survey', ad.survey);
-		Assert.isNull(ad.sequence);
-		Assert.isNotNull(ad.errors);
-		Assert.areEqual(2, ad.errors.length);
-		Assert.areEqual('http://myErrorURL/error', ad.errors[0].url);
-		Assert.areEqual('http://myErrorURL/wrapper/error', ad.errors[1].url);
-
-		Assert.isNotNull(ad.impressions);
-		Assert.areEqual(2, ad.impressions.length);
-		Assert.areEqual('http://myTrackingURL/impression', ad.impressions[0].url);
-		Assert.areEqual('http://myTrackingURL/wrapper/impression', ad.impressions[1].url);
-		Assert.isNotNull(ad.creatives);
-		Assert.areEqual(2, ad.creatives.length);
-
-		var creative:Creative = ad.creatives[0];
-		Assert.isNotNull(creative);
-		Assert.isNotNull(creative.adID);
-		Assert.areEqual('602678-NonLinear', creative.adID);
-		Assert.isNotNull(creative.adIDs);
-		Assert.areEqual('602678-NonLinear', creative.adIDs[0]);
-		Assert.areEqual('602867-NonLinearTracking', creative.adIDs[1]);
-
-		Assert.isType(creative.details, NonLinearAds);
-		var nonlinearAds:NonLinearAds = cast creative.details;
-		Assert.isNotNull(nonlinearAds);
-		Assert.isNotNull(nonlinearAds.trackingEvents);
-		Assert.areEqual(10, nonlinearAds.trackingEvents.length);
-
-		var trackingEvents = [
-			TrackingEvent.CREATIVE_VIEW,
-			TrackingEvent.EXPAND,
-			TrackingEvent.COLLAPSE,
-			TrackingEvent.ACCEPT_INVITATION_NONLINEAR,
-			TrackingEvent.CLOSE_NONLINEAR,
-			TrackingEvent.CREATIVE_VIEW,
-			TrackingEvent.EXPAND,
-			TrackingEvent.COLLAPSE,
-			TrackingEvent.ACCEPT_INVITATION_NONLINEAR,
-			TrackingEvent.CLOSE_NONLINEAR
-		];
-		for (idx in 0...nonlinearAds.trackingEvents.length) {
-			Assert.isNotNull(nonlinearAds.trackingEvents[idx]);
-			Assert.areEqual(trackingEvents[idx], nonlinearAds.trackingEvents[idx].event);
-		}
-
-		Assert.isNotNull(nonlinearAds.nonLinear);
-		Assert.areEqual(2, nonlinearAds.nonLinear.length);
-
-		var nonlinear = nonlinearAds.nonLinear[0];
-		Assert.areEqual(300, nonlinear.width);
-		Assert.areEqual(50, nonlinear.height);
-		Assert.areEqual(15, nonlinear.minSuggestedDuration);
-		Assert.areEqual(1, nonlinear.resources.length);
-		Assert.isNotNull(nonlinear.resources[0]);
-		Assert.areEqual(ResourceType.STATIC_RESOURCE, nonlinear.resources[0].type);
-		Assert.areEqual(MIMEType.IMAGE_JPEG, nonlinear.resources[0].creativeType);
-		Assert.areEqual("http://demo.tremormedia.com/proddev/vast/50x300_static.jpg", nonlinear.resources[0].url);
-		Assert.areEqual(1, nonlinear.clicks.length);
-		Assert.isNotNull(nonlinear.clicks[0]);
-		Assert.areEqual(ClickType.NON_LINEAR_CLICK_THROUGH, nonlinear.clicks[0].type);
-		Assert.areEqual("http://demo.tremormedia.com/qa/qa_page/index.html", nonlinear.clicks[0].url);
-
-		nonlinear = nonlinearAds.nonLinear[1];
-		Assert.areEqual(450, nonlinear.width);
-		Assert.areEqual(50, nonlinear.height);
-		Assert.areEqual(20, nonlinear.minSuggestedDuration);
-		Assert.areEqual(1, nonlinear.resources.length);
-		Assert.isNotNull(nonlinear.resources[0]);
-		Assert.areEqual(ResourceType.STATIC_RESOURCE, nonlinear.resources[0].type);
-		Assert.areEqual(MIMEType.IMAGE_JPEG, nonlinear.resources[0].creativeType);
-		Assert.areEqual("http://demo.tremormedia.com/proddev/vast/50x450_static.jpg", nonlinear.resources[0].url);
-		Assert.isNotNull(nonlinear.clicks);
-		Assert.areEqual(1, nonlinear.clicks.length);
-		Assert.isNotNull(nonlinear.clicks[0]);
-		Assert.areEqual(ClickType.NON_LINEAR_CLICK_THROUGH, nonlinear.clicks[0].type);
-		Assert.areEqual("http://demo.tremormedia.com/qa/qa_page/index.html", nonlinear.clicks[0].url);
-
-		creative = ad.creatives[1];
-		Assert.isNotNull(creative);
-		Assert.isNotNull(creative.adID);
-		Assert.areEqual('602678-Companion', creative.adID);
-
-		Assert.isNotNull(creative.details);
-		Assert.areEqual(2, creative.details.length);
-
-		Assert.isNotNull(creative.details[0]);
-		Assert.isType(creative.details[0], Companion);
-		var companion:Companion = cast creative.details[0];
-		Assert.isNotNull(companion);
-		Assert.areEqual(300, companion.width);
-		Assert.areEqual(250, companion.height);
-		Assert.isNotNull(companion.resources);
-		Assert.areEqual(1, companion.resources.length);
-		Assert.isNotNull(companion.resources[0]);
-		Assert.areEqual(ResourceType.STATIC_RESOURCE, companion.resources[0].type);
-		Assert.areEqual(MIMEType.APPLICATION_X_SHOCKWAVE_FLASH, companion.resources[0].creativeType);
-		Assert.areEqual("http://demo.tremormedia.com/proddev/vast/300x250_companion_1.swf", companion.resources[0].url);
-		Assert.isNotNull(companion.clicks);
-		Assert.areEqual(1, companion.clicks.length);
-		Assert.isNotNull(companion.clicks[0]);
-		Assert.areEqual(ClickType.COMPANION_CLICK_THROUGH, companion.clicks[0].type);
-		Assert.areEqual("http://www.tremormedia.com", companion.clicks[0].url);
-
-		Assert.isType(creative.details[1], Companion);
-		companion = cast creative.details[1];
-		Assert.isNotNull(companion);
-		Assert.areEqual(728, companion.width);
-		Assert.areEqual(90, companion.height);
-		Assert.isNotNull(companion.resources);
-		Assert.areEqual(1, companion.resources.length);
-		Assert.isNotNull(companion.resources[0]);
-		Assert.areEqual(ResourceType.STATIC_RESOURCE, companion.resources[0].type);
-		Assert.areEqual(MIMEType.IMAGE_JPEG, companion.resources[0].creativeType);
-		Assert.areEqual("http://demo.tremormedia.com/proddev/vast/728x90_banner1.jpg", companion.resources[0].url);
-		Assert.isNotNull(companion.trackingEvents);
-		Assert.areEqual(1, companion.trackingEvents.length);
-		Assert.areEqual(TrackingEvent.CREATIVE_VIEW, companion.trackingEvents[0].event);
-		Assert.areEqual("http://myTrackingURL/secondCompanion", companion.trackingEvents[0].url);
-		Assert.isNotNull(companion.clicks);
-		Assert.areEqual(1, companion.clicks.length);
-		Assert.isNotNull(companion.clicks[0]);
-		Assert.areEqual(ClickType.COMPANION_CLICK_THROUGH, companion.clicks[0].type);
-		Assert.areEqual("http://www.tremormedia.com", companion.clicks[0].url);
-
-		/////////////////////////////////
+/////////////////////////////////
+		var nonLinearAds:CreativeDetailNonLinearAds = {
+			nonLinear:[
+			{ width:300, height:50, minSuggestedDuration:15,
+				id:null, expandedWidth:null, adParameters:null, expandedHeight:null, scalable:null, maintainAspectRatio:null, apiFramework:null,
+				resources:[{ type:ResourceType.STATIC_RESOURCE, creativeType:MIMEType.IMAGE_JPEG, url:"http://demo.tremormedia.com/proddev/vast/50x300_static.jpg"}],
+				clicks:[{id:null, type:ClickType.NON_LINEAR_CLICK_THROUGH, url:'http://demo.tremormedia.com/qa/qa_page/index.html'}]
+			},
+			{ width:450, height:50, minSuggestedDuration:20,
+				id:null, adParameters:null,expandedWidth:null, expandedHeight:null, scalable:null, maintainAspectRatio:null, apiFramework:null,
+				resources:[{type:ResourceType.STATIC_RESOURCE, creativeType:MIMEType.IMAGE_JPEG, url:"http://demo.tremormedia.com/proddev/vast/50x450_static.jpg"}],
+				clicks:[{id:null, type:ClickType.NON_LINEAR_CLICK_THROUGH, url:'http://demo.tremormedia.com/qa/qa_page/index.html'}]
+			}],
+			trackingEvents:[
+				{ event:TrackingEvent.CREATIVE_VIEW, url:'http://myTrackingURL/nonlinear/creativeView' },
+				{ event:TrackingEvent.EXPAND, url:'http://myTrackingURL/nonlinear/expand' },
+				{ event:TrackingEvent.COLLAPSE, url:'http://myTrackingURL/nonlinear/collapse' },
+				{ event:TrackingEvent.ACCEPT_INVITATION_NONLINEAR, url:'http://myTrackingURL/nonlinear/acceptInvitation' },
+				{ event:TrackingEvent.CLOSE_NONLINEAR, url:'http://myTrackingURL/nonlinear/close' },
+				{ event:TrackingEvent.CREATIVE_VIEW, url:'http://myTrackingURL/wrapper/nonlinear/creativeView/creativeView' },
+				{ event:TrackingEvent.EXPAND, url:'http://myTrackingURL/wrapper/nonlinear/creativeView/expand' },
+				{ event:TrackingEvent.COLLAPSE, url:'http://myTrackingURL/wrapper/nonlinear/creativeView/collapse' },
+				{ event:TrackingEvent.ACCEPT_INVITATION_NONLINEAR, url:'http://myTrackingURL/wrapper/nonlinear/creativeView/acceptInvitation' },
+				{ event:TrackingEvent.CLOSE_NONLINEAR, url:'http://myTrackingURL/wrapper/nonlinear/creativeView/close' }
+			]
+		};
+		var companionAds:Array<CreativeDetailCompanion> = [{ width:300,height:250,
+			id:null, adParameters:null, altText:null, assetWidth:null,assetHeight:null,expandedWidth:null,expandedHeight:null,apiFramework:null,adSlotID:null,required:null,
+			resources:[{type:ResourceType.STATIC_RESOURCE, creativeType:MIMEType.APPLICATION_X_SHOCKWAVE_FLASH, url:"http://demo.tremormedia.com/proddev/vast/300x250_companion_1.swf"}],
+			clicks:[{id:null, type:ClickType.COMPANION_CLICK_THROUGH, url:'http://www.tremormedia.com'}],
+			trackingEvents:[{event:TrackingEvent.CREATIVE_VIEW, url:'http://myTrackingURL/wrapper/firstCompanionCreativeView'}]
+		},{ width:728,height:90,
+			id:null, adParameters:null, altText:null, assetWidth:null, assetHeight:null, expandedWidth:null, expandedHeight:null, apiFramework:null,adSlotID:null,required:null,
+			resources:[{ type:ResourceType.STATIC_RESOURCE, creativeType:MIMEType.IMAGE_JPEG, url:"http://demo.tremormedia.com/proddev/vast/728x90_banner1.jpg"}],
+			clicks:[{id:null, type:ClickType.COMPANION_CLICK_THROUGH, url:'http://www.tremormedia.com'}],
+			trackingEvents:[{ event:TrackingEvent.CREATIVE_VIEW, url:'http://myTrackingURL/secondCompanion' }]
+		}];
+		var vast:Vast = {
+			version:VastVersion.v_2_0,
+			ads:[{ id:'602678', system:{name:'Acudeo Compatible', version:null}, title:'NonLinear Test Campaign 1',
+				impressions:[
+					{id:null, url:'http://myTrackingURL/impression'},
+					{id:null, url:'http://myTrackingURL/wrapper/impression'}
+				],
+				creatives:[
+					{ adID:'602678-NonLinear', details:nonLinearAds, adIDs:['602678-NonLinear','602867-NonLinearTracking'], sequence:null, id:null, creativeExtensions:null, apiFramework:null},
+					{ adID:'602678-Companion', details:companionAds, adIDs:null, sequence:null, id:null, creativeExtensions:null, apiFramework:null}
+				],
+				ids:['602867','602678'], description:'NonLinear Test Campaign 1',
+				errors:[{url:'http://myErrorURL/error'},{url:'http://myErrorURL/wrapper/error'}],
+				survey:'http://mySurveyURL/survey', advertiser:null, sequence:null, extensions:null, pricing:null
+			}],
+			error:null
+		};
+		checkMap('vast', vast, data);
 	}
 }

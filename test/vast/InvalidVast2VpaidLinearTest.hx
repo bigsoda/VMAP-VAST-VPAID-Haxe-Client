@@ -4,7 +4,7 @@ import massive.munit.Assert;
 import bs.model.vast.ad.creatives.linear.MediaFile;
 import massive.munit.async.AsyncFactory;
 
-class Vast2InvalidVPAIDLinearTest extends Tests
+class InvalidVast2VpaidLinearTest extends Tests
 {
 	public function new() { super(); }
 
@@ -20,10 +20,5 @@ class Vast2InvalidVPAIDLinearTest extends Tests
 			Assert.isNotNaN(mf.width);
 			Assert.isNotNaN(mf.height);
 		}
-	}
-
-	override function error(data:Dynamic):Void {
-		log('Media File is invalid');
-		//Assert.fail(' onVastError ' + data);
 	}
 }
