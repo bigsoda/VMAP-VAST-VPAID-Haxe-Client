@@ -1,17 +1,15 @@
 package vast;
 
-import bs.model.VastTypes.Vast;
-import bs.model.VastTypes.RequiredType;
-import bs.model.VastTypes.ResourceType;
-import bs.model.VastTypes.ClickType;
-import bs.model.VastTypes.Tracking;
-import bs.model.VastTypes.TrackingEvent;
-import bs.model.VastTypes.MIMEType;
-import bs.model.VastTypes.DeliveryType;
-import bs.model.VastTypes.VastVersion;
-import bs.model.VastTypes.CreativeDetailLinear;
-import bs.model.VastTypes.CreativeDetailCompanion;
-import bs.model.VastTypes.CreativeDetailNonLinearAds;
+import vast.TestTypes.VastTestType;
+import vast.TestTypes.CreativeDetailLinearTestType;
+import vast.TestTypes.CreativeDetailCompanionTestType;
+import vast.TestTypes.CreativeDetailNonLinearAdsTestType;
+import bs.model.vast.ad.creatives.linear.MediaFile.DeliveryType;
+import bs.model.vast.ad.creatives.Tracking.TrackingEvent;
+import bs.model.vast.ad.creatives.Resource.ResourceType;
+import bs.model.vast.ad.creatives.Click.ClickType;
+import bs.model.vast.ad.creatives.MIMEType;
+import bs.model.vast.Vast.VastVersion;
 import massive.munit.async.AsyncFactory;
 
 class Vast2WrapperMergeTest extends Tests
@@ -26,7 +24,7 @@ class Vast2WrapperMergeTest extends Tests
 	override public function testStart():Void {
 		super.testStart();
 /////////////////////////////////
-		var linear:CreativeDetailLinear = {
+		var linear:CreativeDetailLinearTestType = {
 			duration:30,
 			mediaFiles:[{
 				delivery:DeliveryType.PROGRESSIVE, type:MIMEType.VIDEO_X_FLV,
@@ -48,13 +46,13 @@ class Vast2WrapperMergeTest extends Tests
 			skipoffset:null, icons:null, adParameters:null
 		};
 
-		var nonLinearAds:CreativeDetailNonLinearAds = {
+		var nonLinearAds:CreativeDetailNonLinearAdsTestType = {
 			trackingEvents:[{ event:TrackingEvent.CREATIVE_VIEW, url:'http://NonLinearAds/tracking/wrapper1/creative2/1' }],
 			//TODO: warn/error on empty nonLinear ??
 			nonLinear:[]
 		};
 
-		var companionAds:Array<CreativeDetailCompanion> = [{ width:300,height:250,
+		var companionAds:Array<CreativeDetailCompanionTestType> = [{ width:300,height:250,
 			id:null, adParameters:null, altText:null, assetWidth:null,assetHeight:null,expandedWidth:null,expandedHeight:null,apiFramework:null,adSlotID:null,required:null,
 			resources:[{type:ResourceType.STATIC_RESOURCE, creativeType:MIMEType.IMAGE_JPEG, url:"http://demo.tremormedia.com/proddev/vast/Blistex1.jpg"}],
 			clicks:[{id:null, type:ClickType.COMPANION_CLICK_THROUGH, url:'http://www.tremormedia.com'}],
@@ -65,7 +63,7 @@ class Vast2WrapperMergeTest extends Tests
 			clicks:[{id:null, type:ClickType.COMPANION_CLICK_THROUGH, url:'http://www.tremormedia.com'}]
 		}];
 
-		var vast:Vast = { version:VastVersion.v_2_0,
+		var vast:VastTestType = { version:VastVersion.v_2_0,
 			ads:[{ id:'inLine', system:{name:'VAST TEST', version:null}, title:'VAST InLine',
 				impressions:[
 					{id:null, url:'http://myTrackingURL/impression'},

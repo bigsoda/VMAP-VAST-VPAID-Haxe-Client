@@ -1,16 +1,13 @@
 package vast;
 
-import bs.model.VastTypes.Vast;
-import bs.model.VastTypes.RequiredType;
-import bs.model.VastTypes.ResourceType;
-import bs.model.VastTypes.ClickType;
-import bs.model.VastTypes.Tracking;
-import bs.model.VastTypes.TrackingEvent;
-import bs.model.VastTypes.MIMEType;
-import bs.model.VastTypes.DeliveryType;
-import bs.model.VastTypes.CreativeDetailNonLinearAds;
-import bs.model.VastTypes.CreativeDetailCompanion;
-import bs.model.VastTypes.VastVersion;
+import vast.TestTypes.VastTestType;
+import vast.TestTypes.CreativeDetailNonLinearAdsTestType;
+import vast.TestTypes.CreativeDetailCompanionTestType;
+import bs.model.vast.ad.creatives.Tracking.TrackingEvent;
+import bs.model.vast.ad.creatives.Resource.ResourceType;
+import bs.model.vast.ad.creatives.Click.ClickType;
+import bs.model.vast.ad.creatives.MIMEType;
+import bs.model.vast.Vast.VastVersion;
 import massive.munit.async.AsyncFactory;
 
 class Vast2WrapperNonLinear2Test extends Tests
@@ -25,7 +22,7 @@ class Vast2WrapperNonLinear2Test extends Tests
 	override public function testStart():Void {
 		super.testStart();
 		/////////////////////////////////
-		var nonLinearAds:CreativeDetailNonLinearAds = {
+		var nonLinearAds:CreativeDetailNonLinearAdsTestType = {
 			nonLinear:[{ width:300, height:50, minSuggestedDuration:15,
 				id:null, expandedWidth:null, adParameters:null, expandedHeight:null, scalable:null, maintainAspectRatio:null, apiFramework:null,
 				resources:[{ type:ResourceType.STATIC_RESOURCE, creativeType:MIMEType.IMAGE_JPEG, url:"http://demo.tremormedia.com/proddev/vast/50x300_static.jpg"}],
@@ -43,7 +40,7 @@ class Vast2WrapperNonLinear2Test extends Tests
 				{ event:TrackingEvent.CLOSE_NONLINEAR, url:'http://myTrackingURL/nonlinear/close' }
 			]
 		};
-		var companionAds:Array<CreativeDetailCompanion> = [{ width:300,height:250,
+		var companionAds:Array<CreativeDetailCompanionTestType> = [{ width:300,height:250,
 			id:null, adParameters:null, altText:null, assetWidth:null,assetHeight:null,expandedWidth:null,expandedHeight:null,apiFramework:null,adSlotID:null,required:null,
 			resources:[{type:ResourceType.STATIC_RESOURCE, creativeType:MIMEType.IMAGE_JPEG, url:"http://demo.tremormedia.com/proddev/vast/300x250_banner1.jpg"}],
 			clicks:[{id:null, type:ClickType.COMPANION_CLICK_THROUGH, url:'http://www.tremormedia.com'}],
@@ -53,7 +50,7 @@ class Vast2WrapperNonLinear2Test extends Tests
 			resources:[{ type:ResourceType.STATIC_RESOURCE, creativeType:MIMEType.IMAGE_JPEG, url:"http://demo.tremormedia.com/proddev/vast/728x90_banner1.jpg"}],
 			clicks:[{id:null, type:ClickType.COMPANION_CLICK_THROUGH, url:'http://www.tremormedia.com'}]
 		}];
-		var vast:Vast = {
+		var vast:VastTestType = {
 			version:VastVersion.v_2_0,
 			ads:[{ id:'602678', system:{name:'Acudeo Compatible', version:null}, title:'NonLinear Test Campaign 1',
 				impressions:[

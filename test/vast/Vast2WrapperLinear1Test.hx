@@ -1,16 +1,14 @@
 package vast;
 
-import bs.model.VastTypes.Vast;
-import bs.model.VastTypes.RequiredType;
-import bs.model.VastTypes.ResourceType;
-import bs.model.VastTypes.ClickType;
-import bs.model.VastTypes.Tracking;
-import bs.model.VastTypes.TrackingEvent;
-import bs.model.VastTypes.MIMEType;
-import bs.model.VastTypes.DeliveryType;
-import bs.model.VastTypes.VastVersion;
-import bs.model.VastTypes.CreativeDetailLinear;
-import bs.model.VastTypes.CreativeDetailCompanion;
+import vast.TestTypes.VastTestType;
+import vast.TestTypes.CreativeDetailLinearTestType;
+import vast.TestTypes.CreativeDetailCompanionTestType;
+import bs.model.vast.ad.creatives.linear.MediaFile.DeliveryType;
+import bs.model.vast.ad.creatives.Tracking.TrackingEvent;
+import bs.model.vast.ad.creatives.Resource.ResourceType;
+import bs.model.vast.ad.creatives.Click.ClickType;
+import bs.model.vast.ad.creatives.MIMEType;
+import bs.model.vast.Vast.VastVersion;
 import massive.munit.async.AsyncFactory;
 
 
@@ -25,7 +23,7 @@ class Vast2WrapperLinear1Test extends Tests
 	override public function testStart():Void {
 		super.testStart();
 /////////////////////////////////
-		var linear:CreativeDetailLinear = { duration:30,
+		var linear:CreativeDetailLinearTestType = { duration:30,
 			mediaFiles:[{delivery:DeliveryType.PROGRESSIVE, type:MIMEType.VIDEO_X_FLV,
 				width:400, height:300, url:'http://cdnp.tremormedia.com/video/acudeo/Carrot_400x300_500kb.flv',
 				scalable:true, minBitrate:null, maxBitrate:null, maintainAspectRatio:true, id:null, codec:null,
@@ -57,7 +55,7 @@ class Vast2WrapperLinear1Test extends Tests
 			skipoffset:null, icons:null, adParameters:null
 		};
 
-		var companions:Array<CreativeDetailCompanion> = [{ width:300,height:250,
+		var companions:Array<CreativeDetailCompanionTestType> = [{ width:300,height:250,
 			id:null, adParameters:null, altText:null, assetWidth:null,assetHeight:null,expandedWidth:null,expandedHeight:null,apiFramework:null,adSlotID:null,required:null,
 			resources:[{type:ResourceType.STATIC_RESOURCE, creativeType:MIMEType.IMAGE_JPEG, url:"http://demo.tremormedia.com/proddev/vast/Blistex1.jpg"}],
 			clicks:[{id:null, type:ClickType.COMPANION_CLICK_THROUGH, url:'http://www.tremormedia.com'}],
@@ -67,7 +65,7 @@ class Vast2WrapperLinear1Test extends Tests
 			resources:[{ type:ResourceType.STATIC_RESOURCE, creativeType:MIMEType.IMAGE_JPEG, url:"http://demo.tremormedia.com/proddev/vast/728x90_banner1.jpg"}],
 			clicks:[{id:null, type:ClickType.COMPANION_CLICK_THROUGH, url:'http://www.tremormedia.com'}]
 		}];
-		var vast:Vast = {
+		var vast:VastTestType = {
 			version:VastVersion.v_2_0,
 			ads:[{ id:'601364', system:{name:'Acudeo Compatible', version:null}, title:'VAST 2.0 Instream Test 1',
 				impressions:[ {id:null, url:'http://myTrackingURL/impression'}, {id:null, url:'http://myTrackingURL/wrapper/impression'}],

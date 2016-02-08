@@ -1,17 +1,15 @@
 package vast;
 
-import bs.model.VastTypes.Vast;
-import bs.model.VastTypes.Tracking;
-import bs.model.VastTypes.CreativeDetailLinear;
-import bs.model.VastTypes.CreativeDetailCompanion;
+import vast.TestTypes.VastTestType;
+import vast.TestTypes.TrackingTestType;
+import vast.TestTypes.CreativeDetailLinearTestType;
+import vast.TestTypes.CreativeDetailCompanionTestType;
 import massive.munit.async.AsyncFactory;
 import bs.model.vast.Vast.VastVersion;
 import bs.model.vast.ad.creatives.MIMEType;
 import bs.model.vast.ad.creatives.Click.ClickType;
 import bs.model.vast.ad.creatives.Tracking.TrackingEvent;
-import bs.model.vast.ad.creatives.Resource.ResourceType;
 import bs.model.vast.ad.creatives.linear.MediaFile.DeliveryType;
-import bs.model.vast.ad.creatives.companion.Companion.RequiredType;
 
 class Vast3Test extends Tests
 {
@@ -22,7 +20,7 @@ class Vast3Test extends Tests
 	}
 	override public function testStart():Void {
 		super.testStart();
-		var ad1_details:Array<CreativeDetailLinear> = [{
+		var ad1_details:Array<CreativeDetailLinearTestType> = [{
 			duration:15,
 			mediaFiles:[{
 				delivery:DeliveryType.STREAMING,
@@ -44,7 +42,7 @@ class Vast3Test extends Tests
 			],
 			skipoffset:null, icons:null, adParameters:null
 		}];
-		var ad2_details:Array<CreativeDetailLinear> = [{
+		var ad2_details:Array<CreativeDetailLinearTestType> = [{
 			duration:31,
 			mediaFiles:[{
 				delivery:DeliveryType.STREAMING,
@@ -66,7 +64,7 @@ class Vast3Test extends Tests
 			],
 			skipoffset:null, icons:null, adParameters:null
 		}];
-		var ad3_details:Array<CreativeDetailLinear> = [{
+		var ad3_details:Array<CreativeDetailLinearTestType> = [{
 			duration:31,
 			mediaFiles:[{
 				delivery:DeliveryType.STREAMING,
@@ -90,7 +88,7 @@ class Vast3Test extends Tests
 		}
 		];
 		/////////////////////////////////
-		var vast:Vast = {
+		var vast:VastTestType = {
 			version:VastVersion.v_3_0,
 			ads:[{
 				id:'2447226.251866656',

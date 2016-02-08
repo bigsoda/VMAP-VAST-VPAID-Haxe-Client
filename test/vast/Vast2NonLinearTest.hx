@@ -1,15 +1,10 @@
 package vast;
 
 import bs.model.VastTypes.Vast;
-import bs.model.VastTypes.RequiredType;
-import bs.model.VastTypes.ResourceType;
-import bs.model.VastTypes.ClickType;
-import bs.model.VastTypes.Tracking;
-import bs.model.VastTypes.TrackingEvent;
-import bs.model.VastTypes.MIMEType;
-import bs.model.VastTypes.DeliveryType;
+import bs.model.vast.ad.creatives.Resource.ResourceType;
+import bs.model.vast.ad.creatives.MIMEType;
+import bs.model.vast.Vast.VastVersion;
 import bs.model.VastTypes.CreativeDetailNonLinearAds;
-import bs.model.VastTypes.VastVersion;
 import massive.munit.async.AsyncFactory;
 
 class Vast2NonLinearTest extends Tests
