@@ -7,15 +7,20 @@ import bs.model.vast.Vast.VastVersion;
 /**
  *  @author Piotr Skolysz <piotr.skolysz@bigsoda.pl>
  */
-class Vast
+#if reader @:build(bs.model.ModelDescriptor.build()) #end
+@:rtti class Vast
 {
+
+	public static function main() {}
 	/**
 	 * vast document version
 	 */
+	@required
 	public var version:VastVersion;
 	/**
 	 * list of ads
 	 */
+	@required
 	public var ads:Array<Ad>;
 	/**
 	 * contains a URI to a tracking resource that the video player should request upon receiving a "no ad" response
@@ -25,7 +30,6 @@ class Vast
 	public function new() 
 	{
 		var a:Ad = new Ad();
-		
 	}
 	
 	public static inline function getVersion(vesion:String):VastVersion
