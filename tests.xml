@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="bs-vmap-vast-munit" default="munit">
 
+    <target name="munit-typedefs">
+        <exec executable="haxe" failonerror="true">
+            <arg line="-cp src"/>
+            <arg line="-main bs.model.ModelReader"/>
+        </exec>
+    </target>
+
     <target name="munit">
         <!--<delete includeEmptyDirs="true">-->
             <!--<fileset dir="bin" includes="**/*" defaultexcludes="no"/>-->

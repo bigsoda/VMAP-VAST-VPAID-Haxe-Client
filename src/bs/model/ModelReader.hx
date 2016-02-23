@@ -3,12 +3,22 @@ package bs.model;
 import haxe.Json;
 import haxe.macro.Expr.TypeDefinition;
 import haxe.macro.Context;
+import bs.model.ModelDescriptor;
 #if macro
 import sys.io.Process;
+
+typedef DupaDef = haxe.macro.MacroType<[bs.model.ModelDescriptor.getFields()]>;
 #end
+
+
+//typedef VastFields = {
+//	var dupa:String;
+//	var cipa:Int;
+//}
 
 class ModelReader
 {
+
 	public static function main()
 	{
 		run();
@@ -16,7 +26,10 @@ class ModelReader
 
 	macro public static function run()
 	{
-		readDescription('bs.model.vast.Vast');
+		var cntxType:haxe.macro.Type = Context.getType('bs.model.ModelReader.VastFields');
+		Sys.print(cntxType);
+
+//		readDescription('bs.model.vast.Vast');
 //		readDescription('bs.model.vast.ad.Ad');
 //		readDescription('bs.model.vast.ad.AdSystem');
 //		readDescription('bs.model.vast.ad.Error');
@@ -88,9 +101,9 @@ class ModelReader
 
 	public static function isInMeta(meta:Array<Dynamic>, name:String):Bool
 	{
-//		for (mt in meta)
-//			if (Reflect.field(mt,'name') == name)
-//				return true;
+		for (mt in meta)
+			if (Reflect.field(mt,'name') == name)
+				return true;
 		return false;
 	}
 #end

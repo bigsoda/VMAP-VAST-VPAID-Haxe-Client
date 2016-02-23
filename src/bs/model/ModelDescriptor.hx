@@ -3,13 +3,69 @@ package bs.model;
 import haxe.Json;
 import haxe.macro.Type.ClassType;
 import haxe.macro.Expr.Field;
-import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.macro.Context;
+import haxe.macro.Expr.ComplexType;
 import haxe.macro.Expr.ComplexType;
 import haxe.macro.Expr.ComplexType.TPath;
 
 class ModelDescriptor
 {
+
+	macro public static function getFields():haxe.macro.Type
+	{
+		return declare('DupaDef', [mkField('dupaValue', mkType('String'))]);
+	}
+
+	#if macro
+	public static function declare(name:String, fields:Array<Field>, ?superType:TypePath):Void
+	{
+		Context.defineType({
+			pos: Context.currentPos(), //the position the type is associated with - should probably point to your XML file
+			params: [], //we have no type parameters in this example
+			pack: [], //no package
+			name: name,
+			fields: [], //we use a different mechanism to add fields, so we pass none here
+			isExtern: false, //not extern
+			meta: [], //no metadata
+			kind: TDAlias(
+			 	//here we "alias" (which is what a typedef does) to a fitting ComplexType
+				if (superType == null)
+					TAnonymous(fields)
+				else
+					TExtend(superType, fields)
+			)
+		});
+
+	}
+	public static function mkPath(name:String):TypePath {
+		var parts = name.split('.');
+		return {
+			sub: null,
+			params: [],
+			name: parts.pop(),
+			pack: parts
+		}
+	}
+	public static function mkType(s:String):ComplexType
+		return TPath(mkPath(s));
+
+	public static function mkField(name:String, type:ComplexType):Field
+		return {
+			pos: Context.currentPos(),
+			name: name,
+			meta: [],
+			kind: FVar(type),
+			doc: null,
+			access: []
+		}
+
+#end
+
+
+
+
+
     macro public static inline function build():Array<Field>
     {
         var c:ClassType = cast Context.getLocalClass();
